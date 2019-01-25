@@ -12,7 +12,7 @@ Conceptually it involves a mathematical embedding from a space with one dimensio
 
 ## 1. How to understand Word embedding?
 
-Here is a answer i posted in Zhihu before:[有谁可以解释下word embedding? - lightsmile的回答 - 知乎](https://www.zhihu.com/question/32275069/answer/563578516)
+Here is an answer i posted in Zhihu before:[有谁可以解释下word embedding? - lightsmile的回答 - 知乎](https://www.zhihu.com/question/32275069/answer/563578516)
 
 # 2.Kinds
 
@@ -50,6 +50,9 @@ word9 0.334 0.241 0.324 0.188
 
 
 # 4.Some resources
+
+- [fastText Pre-trained word vectors](https://github.com/facebookresearch/fastText/blob/master/pretrained-vectors.md)
+- [100+ Chinese Word Vectors 上百种预训练中文词向量](https://github.com/Embedding/Chinese-Word-Vectors)
 
 # 5.References
 
