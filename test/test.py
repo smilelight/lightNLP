@@ -1,4 +1,4 @@
-lightnlp.sl.ner import NER
+from lightnlp.sl import NER
 
 ner_model = NER()
 
