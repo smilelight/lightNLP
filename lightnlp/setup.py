@@ -11,7 +11,7 @@ setup(
     description= "lightsmile's nlp library",
     author='lightsmile',
     author_email='iamlightsmile@gmail.com',
-    url='https://gitlab.yunfutech.com/nlp_projects/Taxis',
+    url='https://github.com/smilelight/lightNLP/tree/master/lightnlp',
     packages=setuptools.find_packages(),
     install_requires=[
         'torchtext>=0.4.0',
