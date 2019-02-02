@@ -1,0 +1,8 @@
+lightnlp/.vscode
+.*/__pycache__
+lightnlp/sl/ner/.idea
+lightnlp/sl/ner/utils/__pycache__
+lightnlp/sl/ner/__pycache__
+lightnlp/sl/ner/\.*
+lightnlp/sl/ner/__pycache__
+lightnlp/sl/ner/.vector_cache

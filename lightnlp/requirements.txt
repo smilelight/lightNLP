@@ -1,0 +1,5 @@
+torchtext==0.4.0
+tqdm==4.28.1
+torch==1.0.0
+pytorch_crf==0.7.0
+scikit_learn==0.20.2
