@@ -6,7 +6,7 @@ from distutils.core import setup
 import setuptools
 
 setup(
-    name='lightnlp',
+    name='lightNLP',
     version='0.1.0.0',
     description= "lightsmile's nlp library",
     author='lightsmile',
@@ -30,6 +30,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries'
     ],
 )
