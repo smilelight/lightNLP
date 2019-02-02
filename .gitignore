@@ -11,3 +11,5 @@ build
 dist
 lightnlp.egg-info
 test/saves
+lightnlp/__pycache__
+lightnlp/sl/__pycache__
