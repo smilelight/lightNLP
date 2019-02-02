@@ -6,3 +6,8 @@ lightnlp/sl/ner/__pycache__
 lightnlp/sl/ner/\.*
 lightnlp/sl/ner/__pycache__
 lightnlp/sl/ner/.vector_cache
+.vscode
+build
+dist
+lightnlp.egg-info
+test/saves
