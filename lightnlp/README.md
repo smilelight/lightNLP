@@ -136,7 +136,7 @@ pprint(ner_model.predict('另一个很酷的事情是，通过框架我们可以
 
 ```python
 
-from lightnlp.sl import SA
+from lightnlp.tc import SA
 
 # 创建SA对象
 sa_model = SA()
