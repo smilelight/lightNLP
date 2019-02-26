@@ -68,7 +68,14 @@ class BiLstmCrf(nn.Module):
         self.hidden2label = nn.Linear(self.hidden_dim, self.tag_num).to(DEVICE)
         self.crflayer = CRF(self.tag_num).to(DEVICE)
 
-        self.hidden = self.init_hidden()
+        # self.init_weight()
+    
+    def init_weight(self):
+        nn.init.xavier_normal_(self.embedding.weight)
+        for name, param in self.lstm.named_parameters():
+            if 'weight' in name:
+                nn.init.xavier_normal_(param)
+        nn.init.xavier_normal_(self.hidden2label.weight)
 
     def init_hidden(self, batch_size=None):
         if batch_size is None:
