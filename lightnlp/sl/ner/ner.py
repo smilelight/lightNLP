@@ -40,9 +40,11 @@ class NER(object):
         for epoch in range(config.epoch):
             bilstmcrf.train()
             acc_loss = 0
-            for fuck in tqdm(train_iter):
+            for item in tqdm(train_iter):
                 bilstmcrf.zero_grad()
-                item_loss = (-bilstmcrf.loss(fuck.text, fuck.tag)) / fuck.text.size(1)
+                item_text_sentences = item.text[0]
+                item_text_lengths = item.text[1]
+                item_loss = (-bilstmcrf.loss(item_text_sentences, item_text_lengths, item.tag)) / item.tag.size(1)
                 acc_loss += item_loss.view(-1).cpu().data.tolist()[0]
                 item_loss.backward()
                 optim.step()

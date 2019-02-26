@@ -14,7 +14,8 @@ def get_score(model, x, y, field_x, field_y, score_type='f1'):
     # print('y', y)
     metric_func = metrics_map[score_type] if score_type in metrics_map else metrics_map['f1']
     vec_x = torch.tensor([field_x.stoi[i] for i in x])
-    predict_y = model(vec_x.view(-1, 1).to(DEVICE))[0]
+    len_vec_x = torch.tensor([len(vec_x)]).to(DEVICE)
+    predict_y = model(vec_x.view(-1, 1).to(DEVICE), len_vec_x)[0]
     true_y = [field_y.stoi[i] for i in y]
     assert len(true_y) == len(predict_y)
     # print('predict_y', predict_y)

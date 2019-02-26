@@ -1,10 +1,13 @@
+import sys
+sys.path.append('/home/lightsmile/Projects/MyGithub/lightNLP')
+
 from lightnlp.sl import NER
 
 ner_model = NER()
 
-train_path = '/home/lightsmile/Download/ner/test.sample.txt'
-dev_path = '/home/lightsmile/Download/ner/train.sample.txt'
-vec_path = '/home/lightsmile/Projects/NLP/ChineseEmbedding/model/token_vec_300.bin'
+train_path = '/home/lightsmile/Downloads/NLP/Chinese-Literature-NER-RE-Dataset/ner/train.sample.txt'
+dev_path = '/home/lightsmile/Downloads/NLP/Chinese-Literature-NER-RE-Dataset/ner/test.sample.txt'
+vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
 
 ner_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./ner_saves')
 

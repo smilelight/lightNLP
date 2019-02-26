@@ -1,11 +1,13 @@
+import os
+import pickle
+
 import torch
 import torch.nn as nn
 from torchcrf import CRF
 from torchtext.vocab import Vectors
-from .utils.log import logger
-import pickle
-import os
+from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
+from .utils.log import logger
 from .config import DEVICE, DEFAULT_CONFIG
 
 
@@ -77,20 +79,23 @@ class BiLstmCrf(nn.Module):
 
         return (h0, c0)
 
-    def loss(self, x, y):
+    def loss(self, x, sent_lengths, y):
         mask = torch.ne(x, self.pad_index)
-        emissions = self.lstm_forward(x)
+        emissions = self.lstm_forward(x, sent_lengths)
         return self.crflayer(emissions, y, mask=mask)
 
-    def forward(self, x):
+    def forward(self, x, sent_lengths):
         mask = torch.ne(x, self.pad_index)
-        emissions = self.lstm_forward(x)
+        emissions = self.lstm_forward(x, sent_lengths)
         return self.crflayer.decode(emissions, mask=mask)
 
-    def lstm_forward(self, sentence):
+    def lstm_forward(self, sentence, sent_lengths):
         x = self.embedding(sentence.to(DEVICE)).to(DEVICE)
-        self.hidden = self.init_hidden(sentence.size()[1])
+        x = pack_padded_sequence(x,sent_lengths)
+        self.hidden = self.init_hidden(batch_size=len(sent_lengths))
         lstm_out, self.hidden = self.lstm(x, self.hidden)
+        lstm_out, new_batch_size = pad_packed_sequence(lstm_out)
+        assert torch.equal(sent_lengths, new_batch_size.to(DEVICE))
         y = self.hidden2label(lstm_out.to(DEVICE))
         return y.to(DEVICE)
 

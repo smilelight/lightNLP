@@ -11,7 +11,7 @@ def light_tokenize(sequence: str):
     return [sequence]
 
 
-TEXT = Field(sequential=True, tokenize=light_tokenize)
+TEXT = Field(sequential=True, tokenize=light_tokenize, include_lengths=True)
 TAG = ReversibleField(sequential=True, tokenize=light_tokenize, is_target=True, unk_token=None)
 Fields = [('text', TEXT), ('tag', TAG)]
 
@@ -40,7 +40,7 @@ def get_vectors(path: str):
     return vectors
 
 
-def get_iterator(dataset: Dataset, batch_size=DEFAULT_CONFIG['batch_size'], device=DEVICE, sort_key=lambda x: len(x.text)):
-    return BucketIterator(dataset, batch_size=batch_size, device=device, sort_key=sort_key)
+def get_iterator(dataset: Dataset, batch_size=DEFAULT_CONFIG['batch_size'], device=DEVICE, sort_key=lambda x: len(x.text), sort_within_batch=True):
+    return BucketIterator(dataset, batch_size=batch_size, device=device, sort_key=sort_key, sort_within_batch=sort_within_batch)
 
 
