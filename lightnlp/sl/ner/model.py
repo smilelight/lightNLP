@@ -1,18 +1,17 @@
-import os
-import pickle
-
 import torch
 import torch.nn as nn
 from torchcrf import CRF
 from torchtext.vocab import Vectors
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
-from .utils.log import logger
+from ...utils.log import logger
 from .config import DEVICE, DEFAULT_CONFIG
+from ...base.model import BaseConfig, BaseModel
 
 
-class Config(object):
+class Config(BaseConfig):
     def __init__(self, word_vocab, tag_vocab, **kwargs):
+        super(Config, self).__init__()
         for name, value in DEFAULT_CONFIG.items():
             setattr(self, name, value)
         self.word_vocab = word_vocab
@@ -21,29 +20,11 @@ class Config(object):
         self.vocabulary_size = len(self.word_vocab)
         for name, value in kwargs.items():
             setattr(self, name, value)
-    
-    @staticmethod
-    def load(path=DEFAULT_CONFIG['save_path']):
-        config = None
-        config_path = os.path.join(path, 'config.pkl')
-        with open(config_path, 'rb') as f:
-            config = pickle.load(f)
-        logger.info('loadding config from {}'.format(config_path))
-        return config
-    
-    def save(self, path=None):
-        path = path if path else self.save_path
-        if not os.path.isdir(path):
-            os.mkdir(path)
-        config_path = os.path.join(path, 'config.pkl')
-        with open(os.path.join(path, 'config.pkl'), 'wb') as f:
-            pickle.dump(self, f)
-        logger.info('saved config to {}'.format(config_path))
 
 
-class BiLstmCrf(nn.Module):
+class BiLstmCrf(BaseModel):
     def __init__(self, args):
-        super(BiLstmCrf, self).__init__()
+        super(BiLstmCrf, self).__init__(args)
         self.args = args
         self.hidden_dim = 300
         self.tag_num = args.tag_num
@@ -105,18 +86,3 @@ class BiLstmCrf(nn.Module):
         assert torch.equal(sent_lengths, new_batch_size.to(DEVICE))
         y = self.hidden2label(lstm_out.to(DEVICE))
         return y.to(DEVICE)
-
-    def load(self, path=None):
-        path = path if path else self.save_path
-        map_location = None if torch.cuda.is_available() else 'cpu'
-        model_path = os.path.join(path, 'model.pkl')
-        self.load_state_dict(torch.load(model_path, map_location=map_location))
-        logger.info('loadding model from {}'.format(model_path))
-    
-    def save(self, path=None):
-        path = path if path else self.save_path
-        if not os.path.isdir(path):
-            os.mkdir(path)
-        model_path = os.path.join(path, 'model.pkl')
-        torch.save(self.state_dict(), model_path)
-        logger.info('saved model to {}'.format(model_path))

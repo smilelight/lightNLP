@@ -2,12 +2,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchtext.vocab import Vectors
-from .utils.log import logger
-import pickle
-import os
+
+from ...utils.log import logger
+from ...base.model import BaseConfig, BaseModel
 
 from .config import DEVICE, DEFAULT_CONFIG
-from ...base.module import BaseConfig, BaseModule
 
 
 class Config(BaseConfig):
@@ -23,7 +22,7 @@ class Config(BaseConfig):
             setattr(self, name, value)
 
 
-class TextCNN(BaseModule):
+class TextCNN(BaseModel):
     def __init__(self, args):
         super(TextCNN, self).__init__(args)
 
@@ -63,7 +62,7 @@ class TextCNN(BaseModule):
         return logits
 
 
-class LSTMClassifier(BaseModule):
+class LSTMClassifier(BaseModel):
     def __init__(self, args):
         super(LSTMClassifier, self).__init__(args)
 

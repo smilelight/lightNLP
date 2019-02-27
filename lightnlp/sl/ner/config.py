@@ -1,5 +1,4 @@
-import torch
-DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+from ...base.config import DEVICE
 DEFAULT_CONFIG = {
     'lr': 0.02,
     'epoch': 30,
