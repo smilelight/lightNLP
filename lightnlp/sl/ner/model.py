@@ -65,7 +65,7 @@ class BiLstmCrf(BaseModel):
         h0 = torch.zeros(self.num_layers * 2, batch_size, self.hidden_dim // 2).to(DEVICE)
         c0 = torch.zeros(self.num_layers * 2, batch_size, self.hidden_dim // 2).to(DEVICE)
 
-        return (h0, c0)
+        return h0, c0
 
     def loss(self, x, sent_lengths, y):
         mask = torch.ne(x, self.pad_index)
@@ -79,7 +79,7 @@ class BiLstmCrf(BaseModel):
 
     def lstm_forward(self, sentence, sent_lengths):
         x = self.embedding(sentence.to(DEVICE)).to(DEVICE)
-        x = pack_padded_sequence(x,sent_lengths)
+        x = pack_padded_sequence(x, sent_lengths)
         self.hidden = self.init_hidden(batch_size=len(sent_lengths))
         lstm_out, self.hidden = self.lstm(x, self.hidden)
         lstm_out, new_batch_size = pad_packed_sequence(lstm_out)
