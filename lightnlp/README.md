@@ -11,7 +11,7 @@
 
 因此将有四个主要的功能模块：sl（序列标注）、tc（文本分类）、sr（句子关系）、tg（文本生成）和其他功能模块如we（字嵌入）。
 
-当前已实现了sl下的命名实体识别（ner）功能、tc下的情感极性分析（sa）功能和tg下的语言模型（lm）功能。
+当前已实现了sl下的命名实体识别（ner）功能、tc下的情感极性分析（sa）功能、tg下的语言模型（lm）功能和sr下的语句相似度（ss）功能和文本蕴含（te）功能。
 
 ## 安装
 
@@ -26,8 +26,12 @@ pip install lightNLP
 - ner: BiLstm-Crf
 - sa: TextCnn
 - lm: Lstm,基础的LSTM，没有使用Seq2Seq模型
+- ss: 共享LSTM + 曼哈顿距离
+- te：共享LSTM + 全连接
 
 ## 训练数据标签
+
+我这里仅是针对当前各任务从网上获取到的训练数据结构类型，有的形式可能并不规范或统一。
 
 #### ner
 
@@ -100,6 +104,40 @@ tsv文件格式
     “唉，昔年那名闻乌坦城的天才少年，如今怎么落魄成这般模样了啊？”
 
 ```
+
+#### ss
+tsv文件类型
+
+训练数据示例如下，其中各列分别为`语句a`，`语句b`，`相似关系`，包括`0，不相似`，`1，相似`：
+```bash
+1       怎么更改花呗手机号码    我的花呗是以前的手机号码，怎么更改成现在的支付宝的号码手机号    1
+2       也开不了花呗，就这样了？完事了  真的嘛？就是花呗付款    0
+3       花呗冻结以后还能开通吗  我的条件可以开通花呗借款吗      0
+4       如何得知关闭借呗        想永久关闭借呗  0
+5       花呗扫码付钱    二维码扫描可以用花呗吗  0
+6       花呗逾期后不能分期吗    我这个 逾期后还完了 最低还款 后 能分期吗        0
+7       花呗分期清空    花呗分期查询    0
+8       借呗逾期短信通知        如何购买花呗短信通知    0
+9       借呗即将到期要还的账单还能分期吗        借呗要分期还，是吗      0
+10      花呗为什么不能支付手机交易      花呗透支了为什么不可以继续用了  0
+```
+
+
+#### te
+tsv文件类型
+
+训练数据示例如下，其中各列分别为`前提`、`假设`、`关系`，其中关系包括`entailment，蕴含`、`neutral，中立`、`contradiction，矛盾`
+
+```bash
+是的，我想一个洞穴也会有这样的问题      我认为洞穴可能会有更严重的问题。        neutral
+几周前我带他和一个朋友去看幼儿园警察    我还没看过幼儿园警察，但他看了。        contradiction
+航空旅行的扩张开始了大众旅游的时代，希腊和爱琴海群岛成为北欧人逃离潮湿凉爽的夏天的令人兴奋的目的地。    航空旅行的扩大开始了许多旅游业的发展。  entailment
+当两名工人待命时，一条大的白色管子正被放在拖车上。      这些人正在监督管道的装载。      neutral
+男人俩互相交换一个很大的金属环，骑着火车向相反的方向行驶。      婚礼正在教堂举行。      contradiction
+一个小男孩在秋千上玩。  小男孩玩秋千    entailment
+
+```
+
 ## 使用
 
 ### ner
@@ -266,6 +304,78 @@ print(lm_model.next_word('要不是', '萧'))
 0.006356663070619106
 ```
 
+### ss
+
+#### 训练
+
+```python
+from lightnlp.sr import SS
+
+ss_model = SS()
+
+train_path = '/home/lightsmile/Projects/NLP/sentence-similarity/input/atec/ss_train.tsv'
+dev_path = '/home/lightsmile/Projects/NLP/sentence-similarity/input/atec/ss_dev.tsv'
+vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
+
+ss_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./ss_saves')
+```
+
+#### 测试
+
+```python
+ss_model.load('./ss_saves')
+ss_model.test(dev_path)
+```
+
+#### 预测
+
+```python
+print(float(ss_model.predict('花呗更改绑定银行卡', '如何更换花呗绑定银行卡')))
+```
+
+预测结果：
+
+```bash
+0.9970847964286804
+```
+
+### te
+
+#### 训练
+
+```python
+from lightnlp.sr import TE
+
+te_model = TE()
+
+train_path = '/home/lightsmile/Projects/liuhuaiyong/ChineseTextualInference/data/te_train.tsv'
+dev_path = '/home/lightsmile/Projects/liuhuaiyong/ChineseTextualInference/data/te_dev.tsv'
+vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
+
+te_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./te_saves')
+```
+
+#### 测试
+
+```python
+te_model.load('./te_saves')
+te_model.test(dev_path)
+```
+
+#### 预测
+
+```python
+print(te_model.predict('一个小男孩在秋千上玩。', '小男孩玩秋千'))
+print(te_model.predict('两个年轻人用泡沫塑料杯子喝酒时做鬼脸。', '两个人在跳千斤顶。'))
+```
+
+预测结果为：
+
+```bash
+(0.4755808413028717, 'entailment')
+(0.5721057653427124, 'contradiction')
+```
+
 ## 项目组织结构
 ### 项目架构
 - base
@@ -304,8 +414,8 @@ print(lm_model.next_word('要不是', '萧'))
 - [ ] 增加earlyStopping。
 - [ ] 增加断点重训功能。
 - [x] 重构项目结构，将相同冗余的地方合并起来，保持项目结构清晰
-- [ ] 增加句子关系模型以及训练预测代码
-- [ ] 增加文本生成模型以及训练预测代码
+- [x] 增加句子关系模型以及训练预测代码
+- [x] 增加文本生成模型以及训练预测代码
 - [ ] 增加词向量相关模型以及训练预测代码
 - [x] 增加语言模型相关模型以及训练预测代码
 - [ ] 增加关系抽取相关模型以及训练预测代码

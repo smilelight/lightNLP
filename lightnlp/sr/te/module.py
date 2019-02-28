@@ -82,7 +82,6 @@ class TE(Module):
 
     def load(self, save_path=DEFAULT_CONFIG['save_path']):
         config = Config.load(save_path)
-        print(config.label_vocab)
         shared_lstm = SharedLSTM(config)
         shared_lstm.load()
         self._model = shared_lstm

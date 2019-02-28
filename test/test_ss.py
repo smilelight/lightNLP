@@ -13,9 +13,9 @@ vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
 
 
 ss_model.load('./ss_saves')
-ss_model.test(dev_path)
+# ss_model.test(dev_path)
 
-# print(float(ss_model.predict('花呗收款收不了怎么办', '开通花呗收款为何不能用')))
-# print(float(ss_model.predict('花呗的安全没有验证成功', '花呗安全验证没通过怎么回事')))
-# print(float(ss_model.predict('花呗支付可以使用购物津贴吗', '使用购物津贴的费用可以用花呗吗')))
-# print(float(ss_model.predict('花呗更改绑定银行卡', '如何更换花呗绑定银行卡')))
+print(float(ss_model.predict('花呗收款收不了怎么办', '开通花呗收款为何不能用')))
+print(float(ss_model.predict('花呗的安全没有验证成功', '花呗安全验证没通过怎么回事')))
+print(float(ss_model.predict('花呗支付可以使用购物津贴吗', '使用购物津贴的费用可以用花呗吗')))
+print(float(ss_model.predict('花呗更改绑定银行卡', '如何更换花呗绑定银行卡')))

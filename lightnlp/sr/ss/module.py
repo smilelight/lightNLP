@@ -73,8 +73,6 @@ class SS(Module):
         vec_texta = torch.tensor([self._word_vocab.stoi[x] for x in pad_texta])
         pad_textb = pad_sequnce([x for x in textb], DEFAULT_CONFIG['fix_length'])
         vec_textb = torch.tensor([self._word_vocab.stoi[x] for x in pad_textb])
-        print(len(pad_texta))
-        print(len(pad_textb))
         vec_predict = self._model(vec_texta.view(-1, 1).to(DEVICE),
                                   vec_textb.view(-1, 1).to(DEVICE))[0]
         return vec_predict.cpu().item()
