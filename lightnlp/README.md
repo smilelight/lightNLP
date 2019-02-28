@@ -426,14 +426,74 @@ print(te_model.predict('两个年轻人用泡沫塑料杯子喝酒时做鬼脸�
 
 ## 参考
 
-- [sequence_tagging](https://github.com/AdolHong/sequence_tagging)
+### Deep Learning
+
+- [What's the difference between “hidden” and “output” in PyTorch LSTM?](https://stackoverflow.com/questions/48302810/whats-the-difference-between-hidden-and-output-in-pytorch-lstm)
+
+### NLP
+
+### Pytorch教程
+
+- [PyTorch 常用方法总结4：张量维度操作（拼接、维度扩展、压缩、转置、重复……）](https://zhuanlan.zhihu.com/p/31495102)
+- [Pytorch中的RNN之pack_padded_sequence()和pad_packed_sequence()](https://www.cnblogs.com/sbj123456789/p/9834018.html)
+- [pytorch学习笔记（二）：gradient](https://blog.csdn.net/u012436149/article/details/54645162)
+- [torch.multinomial()理解](https://blog.csdn.net/monchin/article/details/79787621)
+- [Pytorch 细节记录](https://www.cnblogs.com/king-lps/p/8570021.html)
+
+### torchtext介绍
+
+- [torchtext](https://github.com/pytorch/text)
+- [A Tutorial on Torchtext](http://anie.me/On-Torchtext/)
+- [Torchtext 详细介绍](https://zhuanlan.zhihu.com/p/37223078)
+- [torchtext入门教程，轻松玩转文本数据处理](https://zhuanlan.zhihu.com/p/31139113)
+
+### 其他工具模块
+
+- [python的Tqdm模块](https://blog.csdn.net/langb2014/article/details/54798823)
+- [pytorch-crf](https://github.com/kmkurn/pytorch-crf)
+
+### 数据集
+
 - [ChineseEmbedding](https://github.com/liuhuanyong/ChineseEmbedding)
 - [Chinese-Literature-NER-RE-Dataset](https://github.com/lancopku/Chinese-Literature-NER-RE-Dataset)
+- [ChineseTextualInference](https://github.com/liuhuanyong/ChineseTextualInference)
+
+### 序列标注
+
 - [a-PyTorch-Tutorial-to-Sequence-Labeling](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Sequence-Labeling)
+- [sequence_tagging](https://github.com/AdolHong/sequence_tagging)
+
+### 文本分类
+
 - [chinese_text_cnn](https://github.com/bigboNed3/chinese_text_cnn)
-- [torchtext](https://github.com/pytorch/text)
-- [Torchtext 详细介绍](https://zhuanlan.zhihu.com/p/37223078)
-- [pytorch-crf](https://github.com/kmkurn/pytorch-crf)
-- [Pytorch中的RNN之pack_padded_sequence()和pad_packed_sequence()](https://www.cnblogs.com/sbj123456789/p/9834018.html)
-- [python的Tqdm模块](https://blog.csdn.net/langb2014/article/details/54798823)
-- [PyTorch 常用方法总结4：张量维度操作（拼接、维度扩展、压缩、转置、重复……）](https://zhuanlan.zhihu.com/p/31495102)
+
+### 语言模型
+
+- [char-rnn.pytorch](https://github.com/spro/char-rnn.pytorch)
+- [Simple Word-based Language Model in PyTorch](https://github.com/deeplearningathome/pytorch-language-model)
+- [PyTorch 中级篇（5）：语言模型（Language Model (RNN-LM)）](https://shenxiaohai.me/2018/10/20/pytorch-tutorial-intermediate-05/)
+
+### 文本生成
+
+- [好玩的文本生成](https://www.msra.cn/zh-cn/news/features/ruihua-song-20161226)
+- [基于深度学习的文本生成过程](https://puke3615.github.io/2018/08/10/ML-Text-Generator/)
+
+### 语句相似度
+
+- [siamese_lstm](https://github.com/WEAINE/siamese_lstm)
+- [sentence-similarity](https://github.com/yanqiangmiffy/sentence-similarity)
+
+
+### 文本蕴含
+
+- [ChineseTextualInference](https://github.com/liuhuanyong/ChineseTextualInference)
+
+### 其他
+
+- [基于距离的算法 曼哈顿，欧氏等](https://www.jianshu.com/p/bbe6dfac9bc7)
+- [在分类中如何处理训练集中不平衡问题](https://blog.csdn.net/heyongluoyao8/article/details/49408131)
+- [Python-Pandas 如何shuffle（打乱）数据？](https://blog.csdn.net/qq_22238533/article/details/70917102)
+- [Python DataFrame 如何删除原来的索引，重新建立索引](https://www.cnblogs.com/xubing-613/p/6119162.html)
+- [Pandas在读取csv时如何设置列名--常用方法集锦](https://zhuanlan.zhihu.com/p/44503744)
+
+
