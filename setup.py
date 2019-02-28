@@ -3,7 +3,7 @@ import setuptools
 
 setup(
     name='lightNLP',
-    version='0.1.1.0',
+    version='0.2.1.0',
     description= "lightsmile's nlp library",
     author='lightsmile',
     author_email='iamlightsmile@gmail.com',
@@ -14,7 +14,9 @@ setup(
         'tqdm>=4.28.1',
         'torch>=1.0.0',
         'pytorch_crf>=0.7.0',
-        'scikit_learn>=0.20.2'
+        'scikit_learn>=0.20.2',
+        'revtok',
+        'jieba'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
