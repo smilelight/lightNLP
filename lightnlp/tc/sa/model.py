@@ -10,7 +10,7 @@ from .config import DEVICE, DEFAULT_CONFIG
 
 
 class Config(BaseConfig):
-    def __init__(self, word_vocab, label_vocab, **kwargs):
+    def __init__(self, word_vocab, label_vocab, vector_path, **kwargs):
         super(Config, self).__init__()
         for name, value in DEFAULT_CONFIG.items():
             setattr(self, name, value)
@@ -18,6 +18,7 @@ class Config(BaseConfig):
         self.label_vocab = label_vocab
         self.class_num = len(self.label_vocab)
         self.vocabulary_size = len(self.word_vocab)
+        self.vector_path = vector_path
         for name, value in kwargs.items():
             setattr(self, name, value)
 
@@ -36,7 +37,7 @@ class TextCNN(BaseModel):
         self.embedding = nn.Embedding(self.vocabulary_size, self.embedding_dimension).to(DEVICE)
         if args.static:
             logger.info('logging word vectors from {}'.format(args.vector_path))
-            vectors = Vectors(args.vector_path)
+            vectors = Vectors(args.vector_path).vectors
             self.embedding = self.embedding.from_pretrained(vectors, freeze=not args.non_static).to(DEVICE)
         if args.multichannel:
             self.embedding2 = nn.Embedding(self.vocabulary_size, self.embedding_dimension).from_pretrained(args.vectors).to(DEVICE)

@@ -10,7 +10,7 @@ from ...base.model import BaseConfig, BaseModel
 
 
 class Config(BaseConfig):
-    def __init__(self, word_vocab, tag_vocab, **kwargs):
+    def __init__(self, word_vocab, tag_vocab, vector_path, **kwargs):
         super(Config, self).__init__()
         for name, value in DEFAULT_CONFIG.items():
             setattr(self, name, value)
@@ -18,6 +18,7 @@ class Config(BaseConfig):
         self.tag_vocab = tag_vocab
         self.tag_num = len(self.tag_vocab)
         self.vocabulary_size = len(self.word_vocab)
+        self.vector_path = vector_path
         for name, value in kwargs.items():
             setattr(self, name, value)
 
@@ -41,7 +42,7 @@ class BiLstmCrf(BaseModel):
         self.embedding = nn.Embedding(vocabulary_size, embedding_dimension).to(DEVICE)
         if args.static:
             logger.info('logging word vectors from {}'.format(args.vector_path))
-            vectors = Vectors(args.vector_path)
+            vectors = Vectors(args.vector_path).vectors
             self.embedding = self.embedding.from_pretrained(vectors, freeze=not args.non_static).to(DEVICE)
 
         self.lstm = nn.LSTM(embedding_dimension, self.hidden_dim // 2, bidirectional=self.bidirectional,

@@ -41,7 +41,7 @@ class SS(Module):
         self._word_vocab = word_vocab
         self._label_vocab = tag_vocab
         train_iter = ss_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
-        config = Config(word_vocab, tag_vocab, save_path=save_path, **kwargs)
+        config = Config(word_vocab, tag_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
         malstm = MaLSTM(config)
         self._model = malstm
         optim = torch.optim.Adam(self._model.parameters(), lr=config.lr)

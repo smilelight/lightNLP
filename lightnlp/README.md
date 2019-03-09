@@ -2,16 +2,17 @@
 
 ## 前言
 
-依据自然语言处理四大任务，框架主要设计为有以下功能：
+依据自然语言处理四大任务等，框架主要设计为有以下五大功能：
 
 - 序列标注， Sequence Labeling
 - 文本分类， Text Classification
 - 句子关系， Sentence Relation
 - 文本生成， Text Generation
+- 结构分析， Structure Parsing
 
-因此将有四个主要的功能模块：sl（序列标注）、tc（文本分类）、sr（句子关系）、tg（文本生成）和其他功能模块如we（字嵌入）。
+因此将有五个主要的功能模块：sl（序列标注）、tc（文本分类）、sr（句子关系）、tg（文本生成）、sp（结构分析）和其他功能模块如we（字嵌入）。
 
-当前已实现了sl下的命名实体识别（ner）功能、tc下的情感极性分析（sa）功能、tg下的语言模型（lm）功能和sr下的语句相似度（ss）功能和文本蕴含（te）功能。
+当前已实现了sl下的命名实体识别（ner）功能、tc下的情感极性分析（sa）功能、tg下的语言模型（lm）功能、sr下的语句相似度（ss）功能和文本蕴含（te）功能、sp下的基于转移的依存句法分析（tdp）功能和基于图的依存句法分析（gdp）功能。
 
 ## 安装
 
@@ -28,6 +29,8 @@ pip install lightNLP
 - lm: Lstm,基础的LSTM，没有使用Seq2Seq模型
 - ss: 共享LSTM + 曼哈顿距离
 - te：共享LSTM + 全连接
+- tdp：lstm + mlp + shift-reduce(移入规约)
+- gdp：lstm + mlp + biaffine（双仿射）
 
 ## 训练数据标签
 
@@ -138,6 +141,47 @@ tsv文件类型
 
 ```
 
+#### tdp
+
+格式大致如下, 其中每行代表一个`sentence`和对应的`Actions`，两者用` ||| `分隔，其中Actions包括三种：`Shift`、`REDUCE_R`和`REDUCE_L`，分别代表`移入`、`右规约`、`左规约`，其中sentence和Actions之间的序列长度对应关系为```len(Actions) = 2 * len(sentence) - 1``` ：
+
+```bash
+Bell , based in Los Angeles , makes and distributes electronic , computer and building products . ||| SHIFT SHIFT REDUCE_R SHIFT SHIFT SHIFT SHIFT REDUCE_L REDUCE_R REDUCE_R REDUCE_R SHIFT REDUCE_R SHIFT REDUCE_L SHIFT REDUCE_R SHIFT REDUCE_R SHIFT SHIFT REDUCE_R SHIFT REDUCE_R SHIFT REDUCE_R SHIFT REDUCE_R SHIFT REDUCE_L REDUCE_R SHIFT REDUCE_R
+`` Apparently the commission did not really believe in this ideal . '' ||| SHIFT SHIFT SHIFT SHIFT REDUCE_L SHIFT SHIFT SHIFT SHIFT REDUCE_L REDUCE_L REDUCE_L REDUCE_L REDUCE_L REDUCE_L SHIFT SHIFT SHIFT REDUCE_L REDUCE_R REDUCE_R SHIFT REDUCE_R SHIFT REDUCE_R
+```
+#### gdp
+
+CONLL格式，其中各列含义如下：
+
+```bash
+1	ID	当前词在句子中的序号，１开始.
+2	FORM	当前词语或标点  
+3	LEMMA	当前词语（或标点）的原型或词干，在中文中，此列与FORM相同
+4	CPOSTAG	当前词语的词性（粗粒度）
+5	POSTAG	当前词语的词性（细粒度）
+6	FEATS	句法特征，在本次评测中，此列未被使用，全部以下划线代替。
+7	HEAD	当前词语的中心词
+8	DEPREL	当前词语与中心词的依存关系
+```
+ 在CONLL格式中，每个词语占一行，无值列用下划线'_'代替，列的分隔符为制表符'\t'，行的分隔符为换行符'\n'；句子与句子之间用空行分隔。
+ 
+ 示例如：
+ 
+ ```bash
+1       坚决    坚决    a       ad      _       2       方式
+2       惩治    惩治    v       v       _       0       核心成分
+3       贪污    贪污    v       v       _       7       限定
+4       贿赂    贿赂    n       n       _       3       连接依存
+5       等      等      u       udeng   _       3       连接依存
+6       经济    经济    n       n       _       7       限定
+7       犯罪    犯罪    v       vn      _       2       受事
+
+1       最高    最高    n       nt      _       3       限定
+2       人民    人民    n       nt      _       3       限定
+3       检察院  检察院  n       nt      _       4       限定
+4       检察长  检察长  n       n       _       0       核心成分
+5       张思卿  张思卿  n       nr      _       4       同位语
+ ```
 ## 使用
 
 ### ner
@@ -376,6 +420,99 @@ print(te_model.predict('两个年轻人用泡沫塑料杯子喝酒时做鬼脸�
 (0.5721057653427124, 'contradiction')
 ```
 
+### tdp
+
+#### 训练
+
+```python
+from lightnlp.sp import TDP
+
+tdp_model = TDP()
+
+train_path = '/home/lightsmile/Projects/NLP/DeepDependencyParsingProblemSet/data/train.sample.txt'
+dev_path = '/home/lightsmile/Projects/NLP/DeepDependencyParsingProblemSet/data/dev.txt'
+vec_path = '/home/lightsmile/NLP/embedding/english/glove.6B.100d.txt'
+
+tdp_model.train(train_path, dev_path=dev_path, vectors_path=vec_path,save_path='./tdp_saves')
+```
+
+#### 测试
+
+```python
+tdp_model.load('./tdp_saves')
+tdp_model.test(dev_path)
+```
+
+#### 预测
+
+```python
+from pprint import pprint
+pprint(tdp_model.predict('Investors who want to change the required timing should write their representatives '
+                         'in Congress , he added . '))
+```
+
+预测结果如下：
+```bash
+{DepGraphEdge(head=(',', 14), modifier=('he', 15)),
+ DepGraphEdge(head=('<ROOT>', -1), modifier=('Investors', 0)),
+ DepGraphEdge(head=('Congress', 13), modifier=(',', 14)),
+ DepGraphEdge(head=('Investors', 0), modifier=('who', 1)),
+ DepGraphEdge(head=('he', 15), modifier=('added', 16)),
+ DepGraphEdge(head=('in', 12), modifier=('Congress', 13)),
+ DepGraphEdge(head=('representatives', 11), modifier=('in', 12)),
+ DepGraphEdge(head=('required', 6), modifier=('timing', 7)),
+ DepGraphEdge(head=('should', 8), modifier=('their', 10)),
+ DepGraphEdge(head=('the', 5), modifier=('change', 4)),
+ DepGraphEdge(head=('the', 5), modifier=('required', 6)),
+ DepGraphEdge(head=('their', 10), modifier=('representatives', 11)),
+ DepGraphEdge(head=('their', 10), modifier=('write', 9)),
+ DepGraphEdge(head=('timing', 7), modifier=('should', 8)),
+ DepGraphEdge(head=('to', 3), modifier=('the', 5)),
+ DepGraphEdge(head=('want', 2), modifier=('to', 3)),
+ DepGraphEdge(head=('who', 1), modifier=('want', 2))}
+```
+
+返回的格式类型为`set`，其中`DepGraphEdge`为命名元组，包含`head`和`modifier`两元素，这两元素都为`(word, position)`元组
+
+### gdp
+
+#### 训练
+
+```python
+from lightnlp.sp import GDP
+
+gdp_model = GDP()
+
+train_path = '/home/lightsmile/NLP/corpus/dependency_parse/THU/train.sample.conll'
+vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+
+
+gdp_model.train(train_path, dev_path=train_path, vectors_path=vec_path, save_path='./gdp_saves')
+```
+
+#### 测试
+
+```python
+gdp_model.load('./gdp_saves')
+gdp_model.test(train_path)
+```
+
+#### 预测
+
+```python
+word_list = ['最高', '人民', '检察院', '检察长', '张思卿']
+pos_list = ['nt', 'nt', 'nt', 'n', 'nr']
+heads, rels = gdp_model.predict(word_list, pos_list)
+print(heads)
+print(rels)
+```
+
+预测结果如下，其中程序会自动在语句和词性序列首部填充`<ROOT>`，因此返回的结果长度为`len(word_list) + 1`：
+```bash
+[0, 3, 3, 4, 0, 4]
+['<ROOT>', '限定', '限定', '限定', '核心成分', '同位语']
+```
+
 ## 项目组织结构
 ### 项目架构
 - base
@@ -393,6 +530,9 @@ print(te_model.predict('两个年轻人用泡沫塑料杯子喝酒时做鬼脸�
 - tg，文本生成
     - lm，语言模型
     - mt，机器翻译
+- sp，结构分析
+    - tdp，基于转移的依存句法分析
+    - gdp，基于图的依存句法分析
 - utils
 ### 架构说明
 #### base目录
@@ -421,7 +561,9 @@ print(te_model.predict('两个年轻人用泡沫塑料杯子喝酒时做鬼脸�
 - [ ] 增加关系抽取相关模型以及训练预测代码
 - [ ] 增加事件抽取相关模型以及训练预测代码
 - [ ] 增加属性抽取相关模型以及训练预测代码
-- [ ] 增加依存分析相关模型以及训练预测代码
+- [ ] 增加中文分词相关模型以及训练预测代码
+- [ ] 增加词性标注相关模型以及训练预测代码
+- [x] 增加依存分析相关模型以及训练预测代码
 - [ ] 增加关键词抽取相关模型以及训练预测代码
 
 ## 参考
@@ -429,6 +571,8 @@ print(te_model.predict('两个年轻人用泡沫塑料杯子喝酒时做鬼脸�
 ### Deep Learning
 
 - [What's the difference between “hidden” and “output” in PyTorch LSTM?](https://stackoverflow.com/questions/48302810/whats-the-difference-between-hidden-and-output-in-pytorch-lstm)
+- [What's the difference between LSTM() and LSTMCell()?](https://stackoverflow.com/questions/48187283/whats-the-difference-between-lstm-and-lstmcell)
+- [深度学习框架技术剖析[转]](https://aiuai.cn/aifarm904.html)
 
 ### NLP
 
@@ -452,9 +596,13 @@ print(te_model.predict('两个年轻人用泡沫塑料杯子喝酒时做鬼脸�
 - [python的Tqdm模块](https://blog.csdn.net/langb2014/article/details/54798823)
 - [pytorch-crf](https://github.com/kmkurn/pytorch-crf)
 
-### 数据集
+### 词向量
 
 - [ChineseEmbedding](https://github.com/liuhuanyong/ChineseEmbedding)
+
+
+### 数据集
+
 - [Chinese-Literature-NER-RE-Dataset](https://github.com/lancopku/Chinese-Literature-NER-RE-Dataset)
 - [ChineseTextualInference](https://github.com/liuhuanyong/ChineseTextualInference)
 
@@ -488,6 +636,28 @@ print(te_model.predict('两个年轻人用泡沫塑料杯子喝酒时做鬼脸�
 
 - [ChineseTextualInference](https://github.com/liuhuanyong/ChineseTextualInference)
 
+### 中文分词
+
+- [中文分词、词性标注联合模型](https://zhuanlan.zhihu.com/p/56988686)
+- [pytorch_Joint-Word-Segmentation-and-POS-Tagging](https://github.com/bamtercelboo/pytorch_Joint-Word-Segmentation-and-POS-Tagging)
+
+### 词性标注
+
+- [中文分词、词性标注联合模型](https://zhuanlan.zhihu.com/p/56988686)
+- [pytorch_Joint-Word-Segmentation-and-POS-Tagging](https://github.com/bamtercelboo/pytorch_Joint-Word-Segmentation-and-POS-Tagging)
+
+### 依存句法分析
+
+- [汉语树库](http://www.hankcs.com/nlp/corpus/chinese-treebank.html#h3-6)
+- [Deep Biaffine Attention for Neural Dependency Parsing](https://arxiv.org/abs/1611.01734)
+- [中文句法结构](https://xiaoxiaoaurora.github.io/2018/07/03/%E4%B8%AD%E6%96%87%E5%8F%A5%E6%B3%95%E7%BB%93%E6%9E%84/)
+- [句法分析之依存句法](https://nlpcs.com/article/syntactic-parsing-by-dependency)
+- [Deep Biaffine Attention for Neural Dependency Parsing, hankcs简要解读](http://www.hankcs.com/nlp/parsing/deep-biaffine-attention-for-neural-dependency-parsing.html)
+- [Simple and Accurate Dependency Parsing Using Bidirectional LSTM Feature Representations](https://www.transacl.org/ojs/index.php/tacl/article/viewFile/885/198)
+- [biaffine-parser](https://github.com/zysite/biaffine-parser)
+- [DeepDependencyParsingProblemSet](https://github.com/rguthrie3/DeepDependencyParsingProblemSet)
+
+
 ### 其他
 
 - [基于距离的算法 曼哈顿，欧氏等](https://www.jianshu.com/p/bbe6dfac9bc7)
@@ -495,5 +665,5 @@ print(te_model.predict('两个年轻人用泡沫塑料杯子喝酒时做鬼脸�
 - [Python-Pandas 如何shuffle（打乱）数据？](https://blog.csdn.net/qq_22238533/article/details/70917102)
 - [Python DataFrame 如何删除原来的索引，重新建立索引](https://www.cnblogs.com/xubing-613/p/6119162.html)
 - [Pandas在读取csv时如何设置列名--常用方法集锦](https://zhuanlan.zhihu.com/p/44503744)
-
+- [Python中__repr__和__str__区别](https://blog.csdn.net/luckytanggu/article/details/53649156)
 

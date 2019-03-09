@@ -41,7 +41,7 @@ class TE(Module):
         self._word_vocab = word_vocab
         self._label_vocab = label_vocab
         train_iter = te_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
-        config = Config(word_vocab, label_vocab, save_path=save_path, **kwargs)
+        config = Config(word_vocab, label_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
         shared_lstm = SharedLSTM(config)
         self._model = shared_lstm
         optim = torch.optim.Adam(self._model.parameters(), lr=config.lr)

@@ -13,7 +13,7 @@ vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
 
 lm_model.load('./lm_saves')
 
-lm_model.test(train_path)
+# lm_model.test(train_path)
 
 print(lm_model.next_word('要不是', '萧'))
 
