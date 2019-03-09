@@ -3,8 +3,8 @@ import setuptools
 
 setup(
     name='lightNLP',
-    version='0.2.1.0',
-    description= "lightsmile's nlp library",
+    version='0.2.2.0',
+    description="lightsmile's nlp library",
     author='lightsmile',
     author_email='iamlightsmile@gmail.com',
     url='https://github.com/smilelight/lightNLP/tree/master/lightnlp',
@@ -16,7 +16,9 @@ setup(
         'pytorch_crf>=0.7.0',
         'scikit_learn>=0.20.2',
         'revtok',
-        'jieba'
+        'jieba',
+        'gensim',
+        'regex'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
