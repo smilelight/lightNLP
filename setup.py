@@ -7,7 +7,7 @@ setup(
     description="lightsmile's nlp library",
     author='lightsmile',
     author_email='iamlightsmile@gmail.com',
-    url='https://github.com/smilelight/lightNLP/tree/master/lightnlp',
+    url='https://github.com/smilelight/lightNLP',
     packages=setuptools.find_packages(),
     install_requires=[
         'torchtext>=0.4.0',
