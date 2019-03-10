@@ -3,7 +3,7 @@ import setuptools
 
 setup(
     name='lightNLP',
-    version='0.2.2.0',
+    version='0.2.2.1',
     description="lightsmile's nlp library",
     author='lightsmile',
     author_email='iamlightsmile@gmail.com',
