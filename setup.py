@@ -4,7 +4,7 @@ import setuptools
 with open('./README.md', 'r', encoding='utf8') as f:
     long_description = f.read()
 
-with open('./requirements.txt', 'r', encoding='urf8') as f:
+with open('./requirements.txt', 'r', encoding='utf8') as f:
     install_requires = list(map(lambda x: x.strip(), f.readlines()))
 
 setup(
