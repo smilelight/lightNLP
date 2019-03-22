@@ -1,41 +1,38 @@
 import re
 import torch
-from torchtext.data import TabularDataset, Field, Iterator
+from torchtext.data import Field, Iterator
 from torchtext.vocab import Vectors
 from sklearn.metrics import f1_score, accuracy_score, recall_score, precision_score
-import jieba
 
 from ...base.tool import Tool
 from ...utils.log import logger
 from .config import DEVICE, DEFAULT_CONFIG
 
+from .utils.dataset import REDataset
+
 seed = 2019
 torch.manual_seed(seed)
 torch.cuda.manual_seed(seed)
 
-regex = re.compile(r'[^\u4e00-\u9fa5aA-Za-z0-9，。？：！；“”]')
-
 
 def light_tokenize(text):
-    text = regex.sub(' ', text)
-    return [word for word in jieba.cut(text) if word.strip()]
+    return text
 
 
 TEXT = Field(lower=True, tokenize=light_tokenize, batch_first=True)
 LABEL = Field(sequential=False, unk_token=None)
 Fields = [
-            ('index', None),
-            ('label', LABEL),
-            ('text', TEXT)
+            ('text', TEXT),
+            ('label', LABEL)
         ]
 
 
-class SATool(Tool):
-    def get_dataset(self, path: str, fields=Fields, file_type='tsv', skip_header=True):
+class RETool(Tool):
+    def get_dataset(self, path: str, fields=Fields):
         logger.info('loading dataset from {}'.format(path))
-        st_dataset = TabularDataset(path, format=file_type, fields=fields, skip_header=skip_header)
+        re_dataset = REDataset(path, fields)
         logger.info('successed loading dataset')
-        return st_dataset
+        return re_dataset
 
     def get_vocab(self, *dataset):
         logger.info('building word vocab...')
@@ -64,7 +61,7 @@ class SATool(Tool):
             'acc': accuracy_score
         }
         metric_func = metrics_map[score_type] if score_type in metrics_map else metrics_map['f1']
-        assert len(texts) == len(labels)
+        assert texts.size(0) == len(labels)
         vec_predict = model(texts)
         soft_predict = torch.softmax(vec_predict, dim=1)
         predict_prob, predict_index = torch.max(soft_predict.cpu().data, dim=1)
@@ -75,4 +72,4 @@ class SATool(Tool):
         return metric_func(predict_index, labels, average='micro')
 
 
-sa_tool = SATool()
+re_tool = RETool()

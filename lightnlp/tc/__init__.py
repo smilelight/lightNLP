@@ -1,2 +1,3 @@
 from .sa.module import SA
-__all__ = ['SA']
+from .re.module import RE
+__all__ = ['SA', 'RE']

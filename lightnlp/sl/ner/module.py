@@ -58,8 +58,10 @@ class NER(Module):
         bilstmcrf.save()
 
     def predict(self, text):
+        self._model.eval()
         vec_text = torch.tensor([self._word_vocab.stoi[x] for x in text])
-        vec_predict = self._model(vec_text.view(-1, 1).to(DEVICE))[0]
+        len_text = torch.tensor([len(vec_text)]).to(DEVICE)
+        vec_predict = self._model(vec_text.view(-1, 1).to(DEVICE), len_text)[0]
         tag_predict = [self._tag_vocab.itos[i] for i in vec_predict]
         return iob_ranges([x for x in text], tag_predict)
 

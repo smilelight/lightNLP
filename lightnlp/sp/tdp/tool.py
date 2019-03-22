@@ -5,7 +5,7 @@ from sklearn.metrics import f1_score, accuracy_score, recall_score, precision_sc
 
 from ...base.tool import Tool
 from ...utils.log import logger
-from .utils.transition_dataset import TransitionDataset
+from .utils.dataset import TransitionDataset
 from .config import DEVICE, DEFAULT_CONFIG, END_OF_INPUT_TOK, ROOT_TOK, NULL_STACK_TOK
 
 seed = 2019

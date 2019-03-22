@@ -12,7 +12,7 @@
 
 因此将有五个主要的功能模块：sl（序列标注）、tc（文本分类）、sr（句子关系）、tg（文本生成）、sp（结构分析）和其他功能模块如we（字嵌入）。
 
-当前已实现了sl下的命名实体识别（ner）功能、tc下的情感极性分析（sa）功能、tg下的语言模型（lm）功能、sr下的语句相似度（ss）功能和文本蕴含（te）功能、sp下的基于转移的依存句法分析（tdp）功能和基于图的依存句法分析（gdp）功能。
+当前已实现了sl下的命名实体识别（ner）功能、tc下的情感极性分析（sa）功能和关系抽取（re）功能、tg下的语言模型（lm）功能、sr下的语句相似度（ss）功能和文本蕴含（te）功能、sp下的基于转移的依存句法分析（tdp）功能和基于图的依存句法分析（gdp）功能。
 
 ## 安装
 
@@ -47,6 +47,7 @@ pip install https://github.com/pytorch/text/archive/master.zip
 
 - ner: BiLstm-Crf
 - sa: TextCnn
+- re：TextCnn,当前这里只是有监督关系抽取
 - lm: Lstm,基础的LSTM，没有使用Seq2Seq模型
 - ss: 共享LSTM + 曼哈顿距离
 - te：共享LSTM + 全连接
@@ -109,6 +110,15 @@ tsv文件格式
 6       1       最满意的真的不只一点，概括一下最满意的就是性价比了。ps:虽然没有s7性价比高(原厂记录仪,绿净)
 7       0       底盘调教的很低，坐的感觉有些别扭，视角不是很好。
 8       0       开空调时，一档起步动力不足。车子做工有点马虎。
+```
+
+#### re
+
+训练数据示例如下，其中各列分别为`实体1`、`实体2`、`关系`、`句子`
+
+```bash
+钱钟书	辛笛	同门	与辛笛京沪唱和聽钱钟书与钱钟书是清华校友，钱钟书高辛笛两班。
+元武	元华	unknown	于师傅在一次京剧表演中，选了元龙（洪金宝）、元楼（元奎）、元彪、成龙、元华、元武、元泰7人担任七小福的主角。
 ```
 
 #### lm
@@ -297,6 +307,42 @@ pprint(sa_model.predict('外观漂亮，安全性佳，动力够强，油耗够�
 
 ```python
 (1.0, '1') # return格式为（预测概率，预测标签）
+```
+
+### re
+
+#### 训练
+
+```python
+from lightnlp.tc import RE
+
+re = RE()
+
+train_path = '/home/lightsmile/Projects/NLP/ChineseNRE/data/people-relation/train.sample.txt'
+dev_path = '/home/lightsmile/Projects/NLP/ChineseNRE/data/people-relation/test.sample.txt'
+vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+
+re.train(train_path, dev_path=dev_path, vectors_path=vec_path, save_path='./re_saves')
+
+```
+
+#### 测试
+
+```python
+re.load('./re_saves')
+re.test(dev_path)
+```
+
+#### 预测
+
+```python
+print(re.predict('钱钟书', '辛笛', '与辛笛京沪唱和聽钱钟书与钱钟书是清华校友，钱钟书高辛笛两班。'))
+```
+
+预测结果：
+
+```python
+(0.7306928038597107, '同门') # return格式为（预测概率，预测标签）
 ```
 
 ### lm
@@ -548,6 +594,7 @@ print(rels)
     - te，文本蕴含
 - tc，文本分类
     - sa，情感分析
+    - re, 关系抽取
 - tg，文本生成
     - lm，语言模型
     - mt，机器翻译
@@ -571,21 +618,32 @@ print(rels)
 
 ## todo
 
-- [ ] 现在模型保存的路径和名字默认一致，会冲突，接下来每个模型都有自己的`name`。
-- [ ] 增加earlyStopping。
+### 业务
+
+### 工程
+
 - [ ] 增加断点重训功能。
+- [ ] 增加earlyStopping。
 - [x] 重构项目结构，将相同冗余的地方合并起来，保持项目结构清晰
-- [x] 增加句子关系模型以及训练预测代码
-- [x] 增加文本生成模型以及训练预测代码
+- [ ] 现在模型保存的路径和名字默认一致，会冲突，接下来每个模型都有自己的`name`。
+
+### 功能
+
 - [ ] 增加词向量相关模型以及训练预测代码
+- [x] 增加情感分析相关模型以及训练预测代码
+- [x] 增加文本蕴含相关模型以及训练预测代码
+- [x] 增加文本生成相关模型以及训练预测代码
 - [x] 增加语言模型相关模型以及训练预测代码
-- [ ] 增加关系抽取相关模型以及训练预测代码
+- [x] 增加依存分析相关模型以及训练预测代码
+- [x] 增加关系抽取相关模型以及训练预测代码
 - [ ] 增加事件抽取相关模型以及训练预测代码
 - [ ] 增加属性抽取相关模型以及训练预测代码
 - [ ] 增加中文分词相关模型以及训练预测代码
 - [ ] 增加词性标注相关模型以及训练预测代码
-- [x] 增加依存分析相关模型以及训练预测代码
+- [ ] 增加指代消解相关模型以及训练预测代码
+- [x] 增加句子相似度相关模型以及训练预测代码
 - [ ] 增加关键词抽取相关模型以及训练预测代码
+- [x] 增加命名实体识别相关模型以及预测训练代码
 
 ## 参考
 
@@ -597,6 +655,9 @@ print(rels)
 
 ### NLP
 
+- [知识抽取-实体及关系抽取](http://www.shuang0420.com/2018/09/15/%E7%9F%A5%E8%AF%86%E6%8A%BD%E5%8F%96-%E5%AE%9E%E4%BD%93%E5%8F%8A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/)
+- [知识抽取-事件抽取](http://www.shuang0420.com/2018/10/15/%E7%9F%A5%E8%AF%86%E6%8A%BD%E5%8F%96-%E4%BA%8B%E4%BB%B6%E6%8A%BD%E5%8F%96/)
+
 ### Pytorch教程
 
 - [PyTorch 常用方法总结4：张量维度操作（拼接、维度扩展、压缩、转置、重复……）](https://zhuanlan.zhihu.com/p/31495102)
@@ -604,6 +665,11 @@ print(rels)
 - [pytorch学习笔记（二）：gradient](https://blog.csdn.net/u012436149/article/details/54645162)
 - [torch.multinomial()理解](https://blog.csdn.net/monchin/article/details/79787621)
 - [Pytorch 细节记录](https://www.cnblogs.com/king-lps/p/8570021.html)
+- [What does flatten_parameters() do?](https://stackoverflow.com/questions/53231571/what-does-flatten-parameters-do)
+- [关于Pytorch的二维tensor的gather和scatter_操作用法分析](https://www.cnblogs.com/HongjianChen/p/9450987.html)
+- [Pytorch scatter_ 理解轴的含义](https://blog.csdn.net/qq_16234613/article/details/79827006)
+- [‘model.eval()’ vs ‘with torch.no_grad()’](https://discuss.pytorch.org/t/model-eval-vs-with-torch-no-grad/19615)
+- [到底什么是生成式对抗网络GAN？](https://www.msra.cn/zh-cn/news/features/gan-20170511)
 
 ### torchtext介绍
 
@@ -636,6 +702,16 @@ print(rels)
 
 - [chinese_text_cnn](https://github.com/bigboNed3/chinese_text_cnn)
 
+### 命名实体识别
+
+- [sequence_tagging](https://github.com/AdolHong/sequence_tagging)
+
+### 关系抽取
+
+- [ChineseNRE](https://github.com/buppt/ChineseNRE)
+- [pytorch-pcnn](https://github.com/ShomyLiu/pytorch-pcnn)
+- [关系抽取(分类)总结](http://shomy.top/2018/02/28/relation-extraction/)
+
 ### 语言模型
 
 - [char-rnn.pytorch](https://github.com/spro/char-rnn.pytorch)
@@ -667,6 +743,9 @@ print(rels)
 - [中文分词、词性标注联合模型](https://zhuanlan.zhihu.com/p/56988686)
 - [pytorch_Joint-Word-Segmentation-and-POS-Tagging](https://github.com/bamtercelboo/pytorch_Joint-Word-Segmentation-and-POS-Tagging)
 
+### 指代消解
+
+- [AllenNLP系列文章之四：指代消解](https://blog.csdn.net/sparkexpert/article/details/79868335)
 ### 依存句法分析
 
 - [汉语树库](http://www.hankcs.com/nlp/corpus/chinese-treebank.html#h3-6)

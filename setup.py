@@ -1,6 +1,12 @@
 from distutils.core import setup
 import setuptools
 
+with open('./README.md', 'r', encoding='utf8') as f:
+    long_description = f.read()
+
+with open('./requirements.txt', 'r', encoding='urf8') as f:
+    install_requires = list(map(lambda x: x.strip(), f.readlines()))
+
 setup(
     name='lightNLP',
     version='0.2.2.1',
@@ -9,17 +15,10 @@ setup(
     author_email='iamlightsmile@gmail.com',
     url='https://github.com/smilelight/lightNLP',
     packages=setuptools.find_packages(),
-    install_requires=[
-        'torchtext>=0.4.0',
-        'tqdm>=4.28.1',
-        'torch>=1.0.0',
-        'pytorch_crf>=0.7.0',
-        'scikit_learn>=0.20.2',
-        'revtok',
-        'jieba',
-        'gensim',
-        'regex'
-    ],
+    install_requires=install_requires,
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    license='Apache-2.0',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Operating System :: OS Independent',

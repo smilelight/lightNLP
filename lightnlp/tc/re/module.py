@@ -7,33 +7,34 @@ from ...utils.log import logger
 from ...base.module import Module
 
 from .model import Config, TextCNN
-from .utils.pad import pad_sequnce
 from .config import DEVICE, DEFAULT_CONFIG
-from .tool import sa_tool, light_tokenize, TEXT, LABEL
+from .tool import re_tool, TEXT, LABEL
+from .utils.preprocess import handle_line
 
 seed = 2019
 torch.manual_seed(seed)
 torch.cuda.manual_seed(seed)
 
 
-class SA(Module):
+class RE(Module):
     """
     """
+
     def __init__(self):
         self._model = None
         self._word_vocab = None
         self._label_vocab = None
-    
+
     def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, **kwargs):
-        train_dataset = sa_tool.get_dataset(train_path)
+        train_dataset = re_tool.get_dataset(train_path)
         if dev_path:
-            dev_dataset = sa_tool.get_dataset(dev_path)
-            word_vocab, label_vocab = sa_tool.get_vocab(train_dataset, dev_dataset)
+            dev_dataset = re_tool.get_dataset(dev_path)
+            word_vocab, label_vocab = re_tool.get_vocab(train_dataset, dev_dataset)
         else:
-            word_vocab, label_vocab = sa_tool.get_vocab(train_dataset)
+            word_vocab, label_vocab = re_tool.get_vocab(train_dataset)
         self._word_vocab = word_vocab
         self._label_vocab = label_vocab
-        train_iter = sa_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
+        train_iter = re_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
         config = Config(word_vocab, label_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
         textcnn = TextCNN(config)
         # print(textcnn)
@@ -57,10 +58,9 @@ class SA(Module):
         config.save()
         textcnn.save()
 
-    def predict(self, text):
+    def predict(self, entity1: str, entity2: str, sentence: str):
         self._model.eval()
-        text_list = light_tokenize(text)
-        text = pad_sequnce(text_list, 5)
+        text = handle_line(entity1, entity2, sentence)
         vec_text = torch.tensor([self._word_vocab.stoi[x] for x in text])
         vec_text = vec_text.reshape(1, -1).to(DEVICE)
         vec_predict = self._model(vec_text)[0]
@@ -78,18 +78,19 @@ class SA(Module):
         self._word_vocab = config.word_vocab
         self._label_vocab = config.label_vocab
         self._check_vocab()
-    
+
     def test(self, test_path):
-        test_dataset = sa_tool.get_dataset(test_path)
+        self._model.eval()
+        test_dataset = re_tool.get_dataset(test_path)
         test_score = self._validate(test_dataset)
         logger.info('test score:{}'.format(test_score))
-    
+
     def _validate(self, dev_dataset, batch_size=DEFAULT_CONFIG['batch_size']):
         self._model.eval()
         dev_score_list = []
-        dev_iter = sa_tool.get_iterator(dev_dataset, batch_size=batch_size)
+        dev_iter = re_tool.get_iterator(dev_dataset, batch_size=batch_size)
         for dev_item in tqdm(dev_iter):
-            item_score = sa_tool.get_score(self._model, dev_item.text, dev_item.label)
+            item_score = re_tool.get_score(self._model, dev_item.text, dev_item.label)
             dev_score_list.append(item_score)
         return sum(dev_score_list) / len(dev_score_list)
 
