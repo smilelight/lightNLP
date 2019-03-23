@@ -12,7 +12,29 @@
 
 因此将有五个主要的功能模块：sl（序列标注）、tc（文本分类）、sr（句子关系）、tg（文本生成）、sp（结构分析）和其他功能模块如we（字嵌入）。
 
-当前已实现了sl下的命名实体识别（ner）功能、tc下的情感极性分析（sa）功能和关系抽取（re）功能、tg下的语言模型（lm）功能、sr下的语句相似度（ss）功能和文本蕴含（te）功能、sp下的基于转移的依存句法分析（tdp）功能和基于图的依存句法分析（gdp）功能。
+## 当前已实现的功能：
+
+### 序列标注，sl
+- 中文分词，cws
+- 命名实体识别，ner
+- 词性标注，pos
+- 语义角色标注， srl
+
+### 结构分析，sp
+- 基于图的依存句法分析，gdp
+- 基于转移的依存句法分析， tdp
+
+### 句子关系，sr
+- 语句相似度，ss
+- 文本蕴含，te
+
+### 文本分类，tc
+- 关系抽取，re
+- 情感极性分析，sa
+
+### 文本生成，tg
+- 语言模型，lm
+
 
 ## 安装
 
@@ -46,6 +68,9 @@ pip install https://github.com/pytorch/text/archive/master.zip
 ## 模型
 
 - ner: BiLstm-Crf
+- cws：BiLstm-Crf
+- pos：BiLstm-Crf
+- srl：BiLstm-Crf
 - sa: TextCnn
 - re：TextCnn,当前这里只是有监督关系抽取
 - lm: Lstm,基础的LSTM，没有使用Seq2Seq模型
@@ -92,6 +117,159 @@ BIO
 人 I_Person
 ```
 
+#### cws
+
+BIS
+
+训练数据示例如下：
+
+```bash
+4 S
+日 S
+清 B
+晨 I
+， S
+同 B
+样 I
+在 S
+安 B
+新 I
+县 I
+人 B
+民 I
+政 I
+府 I
+门 B
+前 I
+， S
+不 B
+时 I
+有 S
+民 B
+众 I
+专 B
+程 I
+来 I
+此 S
+拍 B
+照 I
+留 B
+念 I
+， S
+有 S
+的 S
+甚 B
+至 I
+穿 B
+着 I
+统 B
+一 I
+的 S
+服 B
+饰 I
+拍 B
+起 I
+了 S
+集 B
+体 I
+照 I
+。 S
+```
+
+#### pos
+
+BIS
+
+训练数据示例如下：
+
+```bash
+只 B-c
+要 I-c
+我 B-r
+们 I-r
+进 B-d
+一 I-d
+步 I-d
+解 B-i
+放 I-i
+思 I-i
+想 I-i
+， S-w
+实 B-i
+事 I-i
+求 I-i
+是 I-i
+， S-w
+抓 B-v
+住 I-v
+机 B-n
+遇 I-n
+， S-w
+开 B-l
+拓 I-l
+进 I-l
+取 I-l
+， S-w
+建 B-v
+设 I-v
+有 S-v
+中 B-ns
+国 I-ns
+特 B-n
+色 I-n
+社 B-n
+会 I-n
+主 I-n
+义 I-n
+的 S-u
+道 B-n
+路 I-n
+就 S-c
+会 S-v
+越 S-d
+走 S-v
+越 S-d
+宽 B-a
+广 I-a
+。 S-w
+```
+
+#### srl
+
+CONLL
+
+训练数据示例如下，其中各列分别为`词`、`词性`、`是否语义谓词`、`角色`，每句仅有一个谓语动词为语义谓词，即每句中第三列仅有一行取值为1，其余都为0.
+
+```bash
+宋浩京  NR      0       O
+转达    VV      0       O
+了      AS      0       O
+朝鲜    NR      0       O
+领导人  NN      0       O
+对      P       0       O
+中国    NR      0       O
+领导人  NN      0       O
+的      DEG     0       O
+亲切    JJ      0       O
+问候    NN      0       O
+，      PU      0       O
+代表    VV      0       O
+朝方    NN      0       O
+对      P       0       O
+中国    NR      0       B-ARG0
+党政    NN      0       I-ARG0
+领导人  NN      0       I-ARG0
+和      CC      0       I-ARG0
+人民    NN      0       E-ARG0
+哀悼    VV      1       rel
+金日成  NR      0       B-ARG1
+主席    NN      0       I-ARG1
+逝世    VV      0       E-ARG1
+表示    VV      0       O
+深切    JJ      0       O
+谢意    NN      0       O
+。      PU      0       O
+```
 
 #### sa
 
@@ -260,6 +438,119 @@ pprint(ner_model.predict('另一个很酷的事情是，通过框架我们可以
 [2019-02-02 22:42:54] [INFO] [MainThread] [model.py:102] loadding model from ./saves/model.pkl
 [{'end': 12, 'entity': '框', 'start': 12, 'type': 'Thing'},
  {'end': 15, 'entity': '我们', 'start': 14, 'type': 'Person'}]
+```
+
+### cws
+
+#### 训练
+
+```python
+from lightnlp.sl import CWS
+
+cws_model = CWS()
+
+train_path = '/home/lightsmile/NLP/corpus/cws/train.sample.txt'
+dev_path = '/home/lightsmile/NLP/corpus/cws/test.sample.txt'
+vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
+
+cws_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./cws_saves')
+```
+
+#### 测试
+
+```python
+cws_model.load('./cws_saves')
+
+cws_model.test(dev_path)
+```
+
+#### 预测
+
+```python
+print(cws_model.predict('抗日战争时期，胡老在与侵华日军交战中四次负伤，是一位不折不扣的抗战老英雄'))
+```
+
+预测结果：
+
+```bash
+['抗日战争', '时期', '，', '胡老', '在', '与', '侵华日军', '交战', '中', '四次', '负伤', '，', '是', '一位', '不折不扣', '的', '抗战', '老', '英雄']
+```
+
+### pos
+
+#### 训练
+
+```python
+from lightnlp.sl import POS
+
+pos_model = POS()
+
+train_path = '/home/lightsmile/NLP/corpus/pos/train.sample.txt'
+dev_path = '/home/lightsmile/NLP/corpus/pos/test.sample.txt'
+vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
+
+pos_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./pos_saves')
+```
+
+#### 测试
+
+```python
+pos_model.load('./pos_saves')
+
+pos_model.test(dev_path)
+```
+
+#### 预测
+
+```python
+print(pos_model.predict('向全国各族人民致以诚挚的问候！'))
+```
+
+预测结果：
+
+```bash
+[('向', 'p'), ('全国', 'n'), ('各族', 'r'), ('人民', 'n'), ('致以', 'v'), ('诚挚', 'a'), ('的', 'u'), ('问候', 'vn'), ('！', 'w')]
+```
+
+### srl
+
+#### 训练
+
+```python
+from lightnlp.sl import SRL
+
+srl_model = SRL()
+
+train_path = '/home/lightsmile/NLP/corpus/srl/train.sample.tsv'
+dev_path = '/home/lightsmile/NLP/corpus/srl/test.sample.tsv'
+vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+
+
+srl_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./srl_saves')
+```
+
+#### 测试
+
+```python
+srl_model.load('./srl_saves')
+
+srl_model.test(dev_path)
+```
+
+#### 预测
+
+```python
+word_list = ['代表', '朝方', '对', '中国', '党政', '领导人', '和', '人民', '哀悼', '金日成', '主席', '逝世', '表示', '深切', '谢意', '。']
+pos_list = ['VV', 'NN', 'P', 'NR', 'NN', 'NN', 'CC', 'NN', 'VV', 'NR', 'NN', 'VV', 'VV', 'JJ', 'NN', 'PU']
+rel_list = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+
+print(srl_model.predict(word_list, pos_list, rel_list))
+```
+
+预测结果：
+
+```bash
+{'ARG0': '中国党政领导人和人民', 'rel': '哀悼', 'ARG1': '金日成主席逝世'}
 ```
 
 ### sa
@@ -589,18 +880,21 @@ print(rels)
     - tool.py
 - sl，序列标注
     - ner，命名实体识别
+    - cws，中文分词
+    - pos，词性标注
+    - srl，语义角色标注
+- sp，结构分析
+    - tdp，基于转移的依存句法分析
+    - gdp，基于图的依存句法分析
 - sr，句子关系
     - ss，句子相似度
     - te，文本蕴含
 - tc，文本分类
-    - sa，情感分析
     - re, 关系抽取
+    - sa，情感分析
 - tg，文本生成
     - lm，语言模型
     - mt，机器翻译
-- sp，结构分析
-    - tdp，基于转移的依存句法分析
-    - gdp，基于图的依存句法分析
 - utils
 ### 架构说明
 #### base目录
@@ -636,12 +930,15 @@ print(rels)
 - [x] 增加语言模型相关模型以及训练预测代码
 - [x] 增加依存分析相关模型以及训练预测代码
 - [x] 增加关系抽取相关模型以及训练预测代码
-- [ ] 增加事件抽取相关模型以及训练预测代码
+- [x] 增加中文分词相关模型以及训练预测代码
+- [x] 增加词性标注相关模型以及训练预测代码
+- [x] 增加事件抽取相关模型以及训练预测代码
 - [ ] 增加属性抽取相关模型以及训练预测代码
-- [ ] 增加中文分词相关模型以及训练预测代码
-- [ ] 增加词性标注相关模型以及训练预测代码
 - [ ] 增加指代消解相关模型以及训练预测代码
+- [ ] 增加自动摘要相关模型以及训练预测代码 
+- [ ] 增加阅读理解相关模型以及训练预测代码
 - [x] 增加句子相似度相关模型以及训练预测代码
+- [ ] 增加序列到序列相关模型以及训练预测代码
 - [ ] 增加关键词抽取相关模型以及训练预测代码
 - [x] 增加命名实体识别相关模型以及预测训练代码
 
@@ -687,7 +984,6 @@ print(rels)
 
 - [ChineseEmbedding](https://github.com/liuhuanyong/ChineseEmbedding)
 
-
 ### 数据集
 
 - [Chinese-Literature-NER-RE-Dataset](https://github.com/lancopku/Chinese-Literature-NER-RE-Dataset)
@@ -712,6 +1008,15 @@ print(rels)
 - [pytorch-pcnn](https://github.com/ShomyLiu/pytorch-pcnn)
 - [关系抽取(分类)总结](http://shomy.top/2018/02/28/relation-extraction/)
 
+### 事件抽取
+
+这里目前粗浅的将语义角色标注技术实现等同于事件抽取任务。
+
+- [语义角色标注](http://wiki.jikexueyuan.com/project/deep-learning/wordSence-identify.html)
+- [iobes_iob 与 iob_ranges 函数借鉴](https://github.com/glample/tagger/blob/master/utils.py)
+- [BiRNN-SRL](https://github.com/zxplkyy/BiRNN-SRL)
+- [chinese_semantic_role_labeling](https://github.com/Nrgeup/chinese_semantic_role_labeling)
+
 ### 语言模型
 
 - [char-rnn.pytorch](https://github.com/spro/char-rnn.pytorch)
@@ -734,18 +1039,23 @@ print(rels)
 - [ChineseTextualInference](https://github.com/liuhuanyong/ChineseTextualInference)
 
 ### 中文分词
-
+- [中文自然语言处理中文分词训练语料](https://download.csdn.net/download/qq_36330643/10514771)
 - [中文分词、词性标注联合模型](https://zhuanlan.zhihu.com/p/56988686)
 - [pytorch_Joint-Word-Segmentation-and-POS-Tagging](https://github.com/bamtercelboo/pytorch_Joint-Word-Segmentation-and-POS-Tagging)
 
 ### 词性标注
 
+- [常见中文词性标注集整理](https://blog.csdn.net/qq_41853758/article/details/82924325)
+- [分词：词性标注北大标准](https://blog.csdn.net/zhoubl668/article/details/6942251)
+- [ICTCLAS 汉语词性标注集 中科院](https://blog.csdn.net/memray/article/details/14105643)
+- [中文文本语料库整理](https://www.jianshu.com/p/206caa232ded)
 - [中文分词、词性标注联合模型](https://zhuanlan.zhihu.com/p/56988686)
 - [pytorch_Joint-Word-Segmentation-and-POS-Tagging](https://github.com/bamtercelboo/pytorch_Joint-Word-Segmentation-and-POS-Tagging)
 
 ### 指代消解
 
 - [AllenNLP系列文章之四：指代消解](https://blog.csdn.net/sparkexpert/article/details/79868335)
+
 ### 依存句法分析
 
 - [汉语树库](http://www.hankcs.com/nlp/corpus/chinese-treebank.html#h3-6)
@@ -757,6 +1067,13 @@ print(rels)
 - [biaffine-parser](https://github.com/zysite/biaffine-parser)
 - [DeepDependencyParsingProblemSet](https://github.com/rguthrie3/DeepDependencyParsingProblemSet)
 
+### 自动摘要
+
+- [干货｜当深度学习遇见自动文本摘要，seq2seq+attention](https://blog.csdn.net/Mbx8X9u/article/details/80491214)
+
+### 阅读理解
+
+- [ASReader：一个经典的机器阅读理解深度学习模型](https://www.imooc.com/article/28709)
 
 ### 其他
 

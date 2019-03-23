@@ -5,8 +5,8 @@ from lightnlp.tg import LM
 
 lm_model = LM()
 
-train_path = '/home/lightsmile/NLP/corpus/lm_test.txt'
-dev_path = '/home/lightsmile/NLP/corpus/lm_test.txt'
+train_path = '/home/lightsmile/NLP/corpus/language_model/lm_test.txt'
+dev_path = '/home/lightsmile/NLP/corpus/language_model/lm_test.txt'
 vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
 
 # lm_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./lm_saves')

@@ -5,7 +5,7 @@ from lightnlp.sp import GDP
 
 gdp_model = GDP()
 
-train_path = '/home/lightsmile/NLP/corpus/dependency_parse/THU/train.sample.conll'
+train_path = '/home/lightsmile/NLP/corpus/dependency_parse/gdp/THU/train.sample.conll'
 vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
 
 
