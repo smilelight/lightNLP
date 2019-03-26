@@ -2,18 +2,17 @@
 
 ## 前言
 
-依据自然语言处理四大任务以及知识图谱的表示学习等，框架主要设计为有以下六大功能：
+依据自然语言处理四大任务等，框架主要设计为有以下五大功能：
 
 - 序列标注， Sequence Labeling
 - 文本分类， Text Classification
 - 句子关系， Sentence Relation
 - 文本生成， Text Generation
 - 结构分析， Structure Parsing
-- 知识图谱， Knowledge Graph
 
-因此将有六个主要的功能模块：sl（序列标注）、tc（文本分类）、sr（句子关系）、tg（文本生成）、sp（结构分析）、kg（知识图谱）和其他功能模块如we（字嵌入）。
+因此将有五个主要的功能模块：sl（序列标注）、tc（文本分类）、sr（句子关系）、tg（文本生成）、sp（结构分析）和其他功能模块如we（字嵌入）。
 
-## 当前已实现的功能：
+## 当前已实现的功能
 
 ### 序列标注，sl
 - 中文分词，cws
@@ -79,9 +78,8 @@ pip install https://github.com/pytorch/text/archive/master.zip
 - te：共享LSTM + 全连接
 - tdp：lstm + mlp + shift-reduce(移入规约)
 - gdp：lstm + mlp + biaffine（双仿射）
-- rl：TransE等
 
-## 训练数据标签
+## 训练数据说明
 
 我这里仅是针对当前各任务从网上获取到的训练数据结构类型，有的形式可能并不规范或统一。
 
@@ -391,30 +389,7 @@ CONLL格式，其中各列含义如下：
 3       检察院  检察院  n       nt      _       4       限定
 4       检察长  检察长  n       n       _       0       核心成分
 5       张思卿  张思卿  n       nr      _       4       同位语
- ```
- 
- 
-
-#### rl
-
-csv格式
- 
-共三列，依次为`头实体`、`关系`、`尾实体`， 示例如下：
- 
- ```bash
-科学,包涵,自然、社会、思维等领域
-科学,外文名,science
-科学,拼音,kē xué
-科学,中文名,科学
-科学,解释,发现、积累的真理的运用与实践
-语法学,外文名,syntactics
-语法学,中文名,语法学
-物理宇宙学,对象,大尺度结构和宇宙形成
-物理宇宙学,时间,二十世纪
-物理宇宙学,所属,天体物理学
- ```
- 
- 
+ ``` 
 
 ## 使用
 
@@ -896,70 +871,6 @@ print(rels)
 ['<ROOT>', '限定', '限定', '限定', '核心成分', '同位语']
 ```
 
-### rl
-
-#### 训练
-
-```python
-from lightnlp.kg.rl import RL
-
-train_path = '/home/lightsmile/NLP/corpus/kg/baike/train.sample.csv'
-dev_path = '/home/lightsmile/NLP/corpus/kg/baike/test.sample.csv'
-model_type = 'TransE'
-
-rl = RL()
-rl.train(train_path, model_type=model_type, dev_path=train_path, save_path='./rl_{}_saves'.format(model_type))
-```
-
-#### 测试
-
-```python
-rl.load(save_path='./rl_{}_saves'.format(model_type), model_type=model_type)
-rl.test(train_path)
-```
-
-#### 预测
-
-##### 根据头实体、关系、尾实体，预测其概率
-
-```python
-print(rl.predict(head='编译器', rel='外文名', tail='Compiler'))
-```
-
-输出为：
-```bash
-0.998942494392395
-```
-##### 根据头实体和关系，预测训练集词表中topk(默认为3)个可能尾实体
-
-```python
-print(rl.predict_tail(head='编译器', rel='外文名'))
-```
-
-输出为：
-```bash
-[('Compiler', 0.998942494392395), ('20世纪50年代末', 0.3786872327327728), ('译码器', 0.3767447769641876)]
-```
-##### 根据头实体和尾实体，预测训练集词表中topk(默认为3)个可能关系
-
-```python
-print(rl.predict_rel(head='编译器', tail='Compiler'))
-```
-
-输出为：
-```bash
-[('外文名', 0.998942494392395), ('英译', 0.8240533471107483), ('拼音', 0.4082326292991638)]
-```
-##### 根据尾实体和关系，预测训练集词表中topk(默认为3)个可能头实体
-```python
-print(rl.predict_head(rel='外文名', tail='Compiler'))
-```
-
-输出为：
-```bash
-[('编译器', 0.998942494392395), ('译码器', 0.36795616149902344), ('计算机，单片机，编程语言', 0.36788302659988403)]
-```
-
 ## 项目组织结构
 
 ### 项目架构
@@ -1034,7 +945,6 @@ print(rl.predict_head(rel='外文名', tail='Compiler'))
 - [ ] 增加序列到序列相关模型以及训练预测代码
 - [ ] 增加关键词抽取相关模型以及训练预测代码
 - [x] 增加命名实体识别相关模型以及预测训练代码
-- [x] 增加知识图谱表示学习相关模型以及预测训练代码
 
 ## 参考
 
@@ -1045,7 +955,6 @@ print(rl.predict_head(rel='外文名', tail='Compiler'))
 - [深度学习框架技术剖析[转]](https://aiuai.cn/aifarm904.html)
 
 ### NLP
-
 
 - [基于表示学习的信息抽取方法浅析](https://www.jiqizhixin.com/articles/2016-11-15-5)
 - [知识抽取-实体及关系抽取](http://www.shuang0420.com/2018/09/15/%E7%9F%A5%E8%AF%86%E6%8A%BD%E5%8F%96-%E5%AE%9E%E4%BD%93%E5%8F%8A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/)
@@ -1177,10 +1086,6 @@ print(rl.predict_head(rel='外文名', tail='Compiler'))
 
 - [ASReader：一个经典的机器阅读理解深度学习模型](https://www.imooc.com/article/28709)
 
-### 表示学习
-- [TransE-Knowledge-Graph-Embedding](https://github.com/Lapis-Hong/TransE-Knowledge-Graph-Embedding)
-- [OpenKE-PyTorch](https://github.com/ShulinCao/OpenKE-PyTorch)
-- [【语料】2500万中文三元组！](https://spaces.ac.cn/archives/4359)
 ### 其他
 
 - [基于距离的算法 曼哈顿，欧氏等](https://www.jianshu.com/p/bbe6dfac9bc7)
