@@ -1189,4 +1189,6 @@ print(rl.predict_head(rel='外文名', tail='Compiler'))
 - [Python DataFrame 如何删除原来的索引，重新建立索引](https://www.cnblogs.com/xubing-613/p/6119162.html)
 - [Pandas在读取csv时如何设置列名--常用方法集锦](https://zhuanlan.zhihu.com/p/44503744)
 - [Python中__repr__和__str__区别](https://blog.csdn.net/luckytanggu/article/details/53649156)
-
+- [Python3:ImportError: No module named 'compiler.ast'](https://blog.csdn.net/w5688414/article/details/78489277)
+- [Automated Python 2 to 3 code translation](https://docs.python.org/2/library/2to3.html)
+- [git 拉取远程分支到本地](https://blog.csdn.net/carfge/article/details/79691360)
