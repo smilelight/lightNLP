@@ -400,9 +400,9 @@ from lightnlp.sl import NER
 # 创建NER对象
 ner_model = NER()
 
-train_path = '/home/lightsmile/Download/ner/test.sample.txt'
-dev_path = '/home/lightsmile/Download/ner/train.sample.txt'
-vec_path = '/home/lightsmile/Projects/NLP/ChineseEmbedding/model/token_vec_300.bin'
+train_path = '/home/lightsmile/NLP/corpus/ner/train.sample.txt'
+dev_path = '/home/lightsmile/NLP/corpus/ner/test.sample.txt'
+vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
 
 # 只需指定训练数据路径，预训练字向量可选，开发集路径可选，模型保存路径可选。
 ner_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./ner_saves')
@@ -420,9 +420,6 @@ ner_model.test(train_path)
 #### 预测
 
 ```python
-# 加载模型，默认当前目录下的`saves`目录
-ner_model.load('./ner_saves')
-
 from pprint import pprint
 
 pprint(ner_model.predict('另一个很酷的事情是，通过框架我们可以停止并在稍后恢复训练。'))
@@ -431,10 +428,7 @@ pprint(ner_model.predict('另一个很酷的事情是，通过框架我们可以
 预测结果：
 
 ```bash
-[2019-02-02 22:42:52] [INFO] [MainThread] [model.py:29] loadding config from ./saves/config.pkl
-[2019-02-02 22:42:54] [INFO] [MainThread] [model.py:102] loadding model from ./saves/model.pkl
-[{'end': 12, 'entity': '框', 'start': 12, 'type': 'Thing'},
- {'end': 15, 'entity': '我们', 'start': 14, 'type': 'Person'}]
+[{'end': 15, 'entity': '我们', 'start': 14, 'type': 'Person'}]
 ```
 
 ### cws

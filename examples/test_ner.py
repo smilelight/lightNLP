@@ -5,8 +5,8 @@ from lightnlp.sl import NER
 
 ner_model = NER()
 
-train_path = '/home/lightsmile/Projects/NLP/Chinese-Literature-NER-RE-Dataset/ner/train.sample.txt'
-dev_path = '/home/lightsmile/Projects/NLP/Chinese-Literature-NER-RE-Dataset/ner/test.sample.txt'
+train_path = '/home/lightsmile/NLP/corpus/ner/train.sample.txt'
+dev_path = '/home/lightsmile/NLP/corpus/ner/test.sample.txt'
 vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
 
 # ner_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./ner_saves')
