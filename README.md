@@ -2,15 +2,16 @@
 
 ## 前言
 
-依据自然语言处理四大任务等，框架主要设计为有以下五大功能：
+依据自然语言处理四大任务以及知识图谱的表示学习等，框架主要设计为有以下六大功能：
 
 - 序列标注， Sequence Labeling
 - 文本分类， Text Classification
 - 句子关系， Sentence Relation
 - 文本生成， Text Generation
 - 结构分析， Structure Parsing
+- 知识图谱， Knowledge Graph
 
-因此将有五个主要的功能模块：sl（序列标注）、tc（文本分类）、sr（句子关系）、tg（文本生成）、sp（结构分析）和其他功能模块如we（字嵌入）。
+因此将有六个主要的功能模块：sl（序列标注）、tc（文本分类）、sr（句子关系）、tg（文本生成）、sp（结构分析）、kg（知识图谱）和其他功能模块如we（字嵌入）。
 
 ## 当前已实现的功能：
 
@@ -35,6 +36,8 @@
 ### 文本生成，tg
 - 语言模型，lm
 
+### 知识图谱，kg
+- 表示学习，rl
 
 ## 安装
 
@@ -63,8 +66,6 @@ pip install -i https://pypi.douban.com/simple/ lightNLP
 pip install https://github.com/pytorch/text/archive/master.zip
 ```
 
-
-
 ## 模型
 
 - ner: BiLstm-Crf
@@ -78,6 +79,7 @@ pip install https://github.com/pytorch/text/archive/master.zip
 - te：共享LSTM + 全连接
 - tdp：lstm + mlp + shift-reduce(移入规约)
 - gdp：lstm + mlp + biaffine（双仿射）
+- rl：TransE等
 
 ## 训练数据标签
 
@@ -334,7 +336,6 @@ tsv文件类型
 10      花呗为什么不能支付手机交易      花呗透支了为什么不可以继续用了  0
 ```
 
-
 #### te
 tsv文件类型
 
@@ -351,13 +352,13 @@ tsv文件类型
 ```
 
 #### tdp
-
 格式大致如下, 其中每行代表一个`sentence`和对应的`Actions`，两者用` ||| `分隔，其中Actions包括三种：`Shift`、`REDUCE_R`和`REDUCE_L`，分别代表`移入`、`右规约`、`左规约`，其中sentence和Actions之间的序列长度对应关系为```len(Actions) = 2 * len(sentence) - 1``` ：
 
 ```bash
 Bell , based in Los Angeles , makes and distributes electronic , computer and building products . ||| SHIFT SHIFT REDUCE_R SHIFT SHIFT SHIFT SHIFT REDUCE_L REDUCE_R REDUCE_R REDUCE_R SHIFT REDUCE_R SHIFT REDUCE_L SHIFT REDUCE_R SHIFT REDUCE_R SHIFT SHIFT REDUCE_R SHIFT REDUCE_R SHIFT REDUCE_R SHIFT REDUCE_R SHIFT REDUCE_L REDUCE_R SHIFT REDUCE_R
 `` Apparently the commission did not really believe in this ideal . '' ||| SHIFT SHIFT SHIFT SHIFT REDUCE_L SHIFT SHIFT SHIFT SHIFT REDUCE_L REDUCE_L REDUCE_L REDUCE_L REDUCE_L REDUCE_L SHIFT SHIFT SHIFT REDUCE_L REDUCE_R REDUCE_R SHIFT REDUCE_R SHIFT REDUCE_R
 ```
+
 #### gdp
 
 CONLL格式，其中各列含义如下：
@@ -391,6 +392,30 @@ CONLL格式，其中各列含义如下：
 4       检察长  检察长  n       n       _       0       核心成分
 5       张思卿  张思卿  n       nr      _       4       同位语
  ```
+ 
+ 
+
+#### rl
+
+csv格式
+ 
+共三列，依次为`头实体`、`关系`、`尾实体`， 示例如下：
+ 
+ ```bash
+科学,包涵,自然、社会、思维等领域
+科学,外文名,science
+科学,拼音,kē xué
+科学,中文名,科学
+科学,解释,发现、积累的真理的运用与实践
+语法学,外文名,syntactics
+语法学,中文名,语法学
+物理宇宙学,对象,大尺度结构和宇宙形成
+物理宇宙学,时间,二十世纪
+物理宇宙学,所属,天体物理学
+ ```
+ 
+ 
+
 ## 使用
 
 ### ner
@@ -871,13 +896,80 @@ print(rels)
 ['<ROOT>', '限定', '限定', '限定', '核心成分', '同位语']
 ```
 
+### rl
+
+#### 训练
+
+```python
+from lightnlp.kg.rl import RL
+
+train_path = '/home/lightsmile/NLP/corpus/kg/baike/train.sample.csv'
+dev_path = '/home/lightsmile/NLP/corpus/kg/baike/test.sample.csv'
+model_type = 'TransE'
+
+rl = RL()
+rl.train(train_path, model_type=model_type, dev_path=train_path, save_path='./rl_{}_saves'.format(model_type))
+```
+
+#### 测试
+
+```python
+rl.load(save_path='./rl_{}_saves'.format(model_type), model_type=model_type)
+rl.test(train_path)
+```
+
+#### 预测
+
+##### 根据头实体、关系、尾实体，预测其概率
+
+```python
+print(rl.predict(head='编译器', rel='外文名', tail='Compiler'))
+```
+
+输出为：
+```bash
+0.998942494392395
+```
+##### 根据头实体和关系，预测训练集词表中topk(默认为3)个可能尾实体
+
+```python
+print(rl.predict_tail(head='编译器', rel='外文名'))
+```
+
+输出为：
+```bash
+[('Compiler', 0.998942494392395), ('20世纪50年代末', 0.3786872327327728), ('译码器', 0.3767447769641876)]
+```
+##### 根据头实体和尾实体，预测训练集词表中topk(默认为3)个可能关系
+
+```python
+print(rl.predict_rel(head='编译器', tail='Compiler'))
+```
+
+输出为：
+```bash
+[('外文名', 0.998942494392395), ('英译', 0.8240533471107483), ('拼音', 0.4082326292991638)]
+```
+##### 根据尾实体和关系，预测训练集词表中topk(默认为3)个可能头实体
+```python
+print(rl.predict_head(rel='外文名', tail='Compiler'))
+```
+
+输出为：
+```bash
+[('编译器', 0.998942494392395), ('译码器', 0.36795616149902344), ('计算机，单片机，编程语言', 0.36788302659988403)]
+```
+
 ## 项目组织结构
+
 ### 项目架构
 - base
     - config.py
     - model.py
     - module.py
     - tool.py
+- kg，知识图谱
+    - rl，表示学习
 - sl，序列标注
     - ner，命名实体识别
     - cws，中文分词
@@ -896,6 +988,7 @@ print(rels)
     - lm，语言模型
     - mt，机器翻译
 - utils
+
 ### 架构说明
 #### base目录
 放一些基础的模块实现，其他的高层业务模型以及相关训练代码都从此module继承相应父类。
@@ -941,6 +1034,7 @@ print(rels)
 - [ ] 增加序列到序列相关模型以及训练预测代码
 - [ ] 增加关键词抽取相关模型以及训练预测代码
 - [x] 增加命名实体识别相关模型以及预测训练代码
+- [x] 增加知识图谱表示学习相关模型以及预测训练代码
 
 ## 参考
 
@@ -952,8 +1046,16 @@ print(rels)
 
 ### NLP
 
+
+- [基于表示学习的信息抽取方法浅析](https://www.jiqizhixin.com/articles/2016-11-15-5)
 - [知识抽取-实体及关系抽取](http://www.shuang0420.com/2018/09/15/%E7%9F%A5%E8%AF%86%E6%8A%BD%E5%8F%96-%E5%AE%9E%E4%BD%93%E5%8F%8A%E5%85%B3%E7%B3%BB%E6%8A%BD%E5%8F%96/)
 - [知识抽取-事件抽取](http://www.shuang0420.com/2018/10/15/%E7%9F%A5%E8%AF%86%E6%8A%BD%E5%8F%96-%E4%BA%8B%E4%BB%B6%E6%8A%BD%E5%8F%96/)
+
+
+### 知识图谱
+
+- [翻译模型(Trans系列)的知识表示学习](https://mp.weixin.qq.com/s/STflo3c8nyG6iHh9dEeKOQ)
+- [知识图谱向量化表示](https://zhuanlan.zhihu.com/p/30320631)
 
 ### Pytorch教程
 
@@ -1075,6 +1177,10 @@ print(rels)
 
 - [ASReader：一个经典的机器阅读理解深度学习模型](https://www.imooc.com/article/28709)
 
+### 表示学习
+- [TransE-Knowledge-Graph-Embedding](https://github.com/Lapis-Hong/TransE-Knowledge-Graph-Embedding)
+- [OpenKE-PyTorch](https://github.com/ShulinCao/OpenKE-PyTorch)
+- [【语料】2500万中文三元组！](https://spaces.ac.cn/archives/4359)
 ### 其他
 
 - [基于距离的算法 曼哈顿，欧氏等](https://www.jianshu.com/p/bbe6dfac9bc7)
