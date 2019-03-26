@@ -35,9 +35,6 @@
 ### 文本生成，tg
 - 语言模型，lm
 
-### 知识图谱，kg
-- 表示学习，rl
-
 ## 安装
 
 本项目基于Pytorch1.0
@@ -879,8 +876,6 @@ print(rels)
     - model.py
     - module.py
     - tool.py
-- kg，知识图谱
-    - rl，表示学习
 - sl，序列标注
     - ner，命名实体识别
     - cws，中文分词
