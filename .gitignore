@@ -7,4 +7,4 @@ dist
 lightnlp.egg-info
 .vscode
 lightNLP.egg-info
-test/*_saves
+examples/*_saves
