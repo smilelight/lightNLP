@@ -9,7 +9,7 @@ with open('./requirements.txt', 'r', encoding='utf8') as f:
 
 setup(
     name='lightNLP',
-    version='0.3.0.2',
+    version='0.3.1.0',
     description="lightsmile's nlp library",
     author='lightsmile',
     author_email='iamlightsmile@gmail.com',

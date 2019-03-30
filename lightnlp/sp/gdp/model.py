@@ -1,10 +1,8 @@
 import torch
 import torch.nn as nn
-from torchcrf import CRF
 from torchtext.vocab import Vectors
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
-from ...utils.log import logger
 from .config import DEVICE, DEFAULT_CONFIG
 from ...base.model import BaseConfig, BaseModel
 from .components.dropout import IndependentDropout, SharedDropout

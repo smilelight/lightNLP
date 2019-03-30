@@ -5,5 +5,4 @@ pytorch_crf==0.7.0
 scikit_learn==0.20.2
 revtok
 jieba
-gensim
 regex
