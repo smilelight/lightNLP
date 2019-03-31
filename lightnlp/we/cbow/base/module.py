@@ -100,6 +100,8 @@ class CBOWBaseModule(Module):
             elif save_mode == 'glove':
                 pass
             for word, word_id in self._word_vocab.stoi.items():
+                if word == ' ':
+                    continue
                 word_embedding = embeddings[word_id]
                 word_embedding = ' '.join(map(lambda x: str(x), word_embedding))
                 f.write('{} {}\n'.format(word, word_embedding))

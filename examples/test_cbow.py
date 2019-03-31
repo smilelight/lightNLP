@@ -1,8 +1,8 @@
 from lightnlp.we import CBOWHierarchicalSoftmaxModule, CBOWNegativeSamplingModule, CBOWBaseModule
 
 # cbow_model = CBOWHierarchicalSoftmaxModule()
-# cbow_model = CBOWBaseModule()
-cbow_model = CBOWNegativeSamplingModule()
+cbow_model = CBOWBaseModule()
+# cbow_model = CBOWNegativeSamplingModule()
 
 train_path = '/home/lightsmile/NLP/corpus/novel/test.txt'
 dev_path = '/home/lightsmile/NLP/corpus/novel/test.txt'
@@ -19,5 +19,5 @@ print(cbow_model.evaluate(test_context, '他'))
 print(cbow_model.evaluate(test_context, '提防'))
 
 # cbow_model.save_embeddings('./cbow_saves/cbow_hs.bin')
-# cbow_model.save_embeddings('./cbow_saves/cbow_base.bin')
-cbow_model.save_embeddings('./cbow_saves/cbow_ns.bin')
+cbow_model.save_embeddings('./cbow_saves/cbow_base.bin')
+# cbow_model.save_embeddings('./cbow_saves/cbow_ns.bin')
