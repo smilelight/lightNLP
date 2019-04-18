@@ -42,10 +42,10 @@ class SA(Module):
         for epoch in range(config.epoch):
             textcnn.train()
             acc_loss = 0
-            for fuck in tqdm(train_iter):
+            for item in tqdm(train_iter):
                 optim.zero_grad()
-                logits = self._model(fuck.text)
-                item_loss = F.cross_entropy(logits, fuck.label)
+                logits = self._model(item.text)
+                item_loss = F.cross_entropy(logits, item.label)
                 acc_loss += item_loss.item()
                 item_loss.backward()
                 optim.step()

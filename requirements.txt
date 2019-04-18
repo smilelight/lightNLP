@@ -6,3 +6,4 @@ scikit_learn==0.20.2
 revtok
 jieba
 regex
+nltk

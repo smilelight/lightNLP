@@ -34,6 +34,9 @@
 
 ### 文本生成，tg
 - 语言模型，lm
+- 聊天机器人，cb
+- 机器翻译，mt
+- 文本摘要，ts
 
 ### 词向量，we
 - 词袋模型，cbow
@@ -89,6 +92,9 @@ pip install https://github.com/pytorch/text/archive/master.zip
 - gdp: lstm + mlp + biaffine（双仿射）
 - cbow: base、hierarchical_softmax、negative_sampling
 - skip_gram: base、hierarchical_softmax、negative_sampling
+- cb: Seq2Seq+Attention
+- mt: Seq2Seq+Attention
+- ts: Seq2Seq+Attention
 
 ## 训练数据说明
 
@@ -436,6 +442,55 @@ CONLL格式，其中各列含义如下：
     “要不是族长是他的父亲，这种废物，早就被驱赶出家族，任其自生自灭了，哪还有机会待在家族中白吃白喝。”
     “唉，昔年那名闻乌坦城的天才少年，如今怎么落魄成这般模样了啊？”
 
+```
+
+#### cb
+
+tsv文件格式
+
+训练数据示例如下：
+
+```bash
+呵呵    是王若猫的。
+不是    那是什么？
+怎么了  我很难过，安慰我~
+开心点哈,一切都会好起来 嗯 会的
+我还喜欢她,怎么办       我帮你告诉她？发短信还是打电话？
+短信    嗯嗯。我也相信
+你知道谁么      肯定不是我，是阮德培
+许兵是谁        吴院四班小帅哥
+```
+
+#### mt
+
+tsv文件格式
+
+训练数据示例如下：
+
+```bash
+Hi.     嗨。
+Hi.     你好。
+Run.    你用跑的。
+Wait!   等等！
+Hello!  你好。
+I try.  让我来。
+I won!  我赢了。
+Oh no!  不会吧。
+Cheers! 干杯!
+He ran. 他跑了。
+```
+
+#### ts
+
+tsv文件格式
+
+训练数据示例如下：
+
+```bash
+徐州18岁农家女孩宋爽，今年考入清华大学。除了自己一路闯关，年年拿奖，还帮妹妹、弟弟制定学习计划，姐弟仨齐头并进，妹妹也考上区里最好的中学。这个家里的收入，全靠父亲务农和打零工，但宋爽懂事得让人心疼，曾需要200元奥数竞赛的教材费，她羞于开口，愣是急哭了... 戳腾讯公益帮帮她们！#助学圆梦# 江苏新闻的秒拍视频   徐州农家女孩考上清华，她的懂事让人心酸…
+盖被子，摇摇篮，汪星人简直要把萌娃宠上天～细致周到有耐心，脾气还好，汪星人不愧是一届带娃好手[笑而不语]偶买噶视频的秒拍视频      带娃好手汪星人！把宝宝们宠上天[憧憬]
+人们通常被社会赋予的"成功"所定义，“做什么工作”“赚多少钱”都用来评判一个人的全部价值，很多人出现身份焦虑。身份焦虑不仅影响幸福感，还会导致精神压力，甚至自杀。如果你也有身份焦虑，这个短片或许会有帮助。秒拍视频  感到压力大的同学看过来！如何缓解身份焦虑？[并不简单]
+网友@星蓝seiran 教大家自制的捕捉器教程，简单方便，里面的洗洁精换成肥皂水或洗衣粉水都可以（用于溶解蟑螂腹部油脂防止爬出），白糖稍微多放点。怕蟑螂的童鞋，可以换成不透明的瓶子。转需~     这个厉害了！[good]
 ```
 
 ## 使用
@@ -1045,6 +1100,126 @@ skip_gram_model.save_embeddings('./skip_gram_saves/skip_gram_ns.bin')
 少女 0.43625292 -0.49615338 -0.80635625 -0.95218086 -0.7034901 -0.24982916 -0.19628817 -0.6407552 1.1144902 -0.18383415 0.240521 -0.48174432 -0.43238354 1.5460479 0.17876568 1.1772094 0.7226882 -0.40163878 -0.27529833 0.6727029 0.6616228 -0.4649058 -0.82819325 0.077967666 0.22773252 0.47824302 1.263238 0.16044211 -0.8465441 -0.03908252 1.5012993 -0.6464531 1.2720991 0.7075523 0.2655532 -0.16548817 0.18449956 -1.57685 -0.3937183 1.1220738 -0.024133356 0.061765857 0.9063283 0.63651776 -0.9984391 1.7219917 -0.16911109 0.3950257 -0.44229308 -0.042594746 -0.18409568 1.5873259 1.5174317 -0.7761925 0.85540444 -0.25851408 -1.7153916 0.21526498 -0.30503598 -1.0740207 -0.26189303 -0.7361771 0.3404945 0.6267011 1.6266515 -0.7249698 -2.5369713 -0.040242277 -0.1521137 -1.2230408 0.105983995 0.24729799 0.66424936 0.7428047 0.8017003 -1.6448103 -1.3638207 0.22201629 -1.6191676 1.7650356 0.8733405 1.2922136 0.15274213 0.56989926 1.3315401 0.3242414 -1.5333288 0.9968748 -0.26946962 -1.7603902 -0.06785398 -1.4466665 -0.2051215 1.0579334 -1.6114388 -0.6311598 -0.42203426 1.2702805 0.049536392 -1.5223664 -1.1988252 -0.005043749 1.2519345 -0.1971786 -0.15249117 -0.09027343 -0.68423694 0.05290712 1.1976366 -0.55118096 0.43239573 -0.3921759 -0.10146248 -0.84204507 -1.5519683 0.41450986 0.08121465 0.70506895 0.36502063 -1.8334937 0.0016303719 0.8337098 0.8315608 2.1455774 0.5289709 -0.15538014 0.18361539 1.5023578 -1.5350997 -0.34078425 -0.17852718 -0.2980528 0.3791773 0.13815962 1.0244071 0.3535323 0.45246312 -1.0676222 0.26734406 -0.7833891 -0.4830871 -0.81460315 0.40275338 -0.4218575 1.2936684 0.36921188 2.0835738 0.29924822 0.607953 0.13717254 1.3793758 -0.17895296 0.25180477 1.0935096 -2.4911408 0.059239827 1.4227028 1.0269765 -0.012899189 0.667102 -1.654389 0.32084498 -1.3945848 0.9240499 0.14125341 -0.40186697 0.46305555 1.4799619 -0.1761365 0.08784475 -0.16064519 -0.32681388 -0.9726041 -0.46950138 -0.10297061 -0.1305801 1.2899957 -0.20281254 1.5096477 0.579964 -2.1962826 -1.0500919 -0.75640684 -0.68146974 -0.61898047 -0.038223892 -0.63422275 -0.40183118 0.71116716 1.7054831 1.2117803 0.5540193 -0.7673277 0.8996408 2.1318727 1.3070806 0.3919676 -0.19198467 0.37812284 -1.5805892 1.622781 0.4241692 0.9778187 0.5272743 0.6481839 -0.91835433 -1.2837874 -1.0056475 -0.03336126 1.7704506 0.59232867 -0.6739266 0.4252755 -0.04943613 1.933676 -1.0441738 0.4929349 -0.5993543 -0.97701305 0.6164371 -1.2127788 1.2599823 -0.5473247 0.93479854 -0.6774386 0.59664416 -0.5358335 -0.6079708 0.7937759 0.5176709 0.2346288 -2.056608 -0.35982183 -0.6090097 0.8602409 0.055992365 -0.6665505 0.6803273 0.8781159 -0.028397428 0.6073012 0.5945208 0.7166259 -0.48727062 0.25150546 0.06475472 -0.33076963 -0.9388699 -0.47334203 1.1939013 0.78029764 0.022830477 -1.198792 1.2806718 0.1218006 0.05305545 1.0819892 -0.8576298 1.796153 -0.05783273 1.4125075 0.22831114 -0.14899425 -0.5525253 -0.8165426 0.043676265 -0.641531 -0.37138024 1.5661736 -1.2548814 0.12986626 -0.9875852 0.4007069 -0.23187949 0.4992489 0.2498534 -1.1453637 1.7015793 -0.91252553 0.07962135 0.7060094 -2.1144807 0.18295327 0.30965614 -0.36403483 0.39038125 -0.580957 0.33897293 -0.1780094 -0.03921564 0.55165535 -0.44981298 0.706237 0.13913499 -0.35856977 -0.20512235 -0.3393937 -1.9689944 2.374302 0.087832846
 ```
 
+### cb
+
+#### 训练
+
+```python
+from lightnlp.tg import CB
+
+cb_model = CB()
+
+train_path = '/home/lightsmile/NLP/corpus/chatbot/chat.train.sample.tsv'
+dev_path = '/home/lightsmile/NLP/corpus/chatbot/chat.test.sample.tsv'
+vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+
+cb_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./cb_saves')
+```
+
+#### 测试
+
+```python
+cb_model.load('./cb_saves')
+
+cb_model.test(train_path)
+```
+
+#### 预测
+
+```python
+print(cb_model.predict('我还喜欢她,怎么办'))
+print(cb_model.predict('怎么了'))
+print(cb_model.predict('开心一点'))
+```
+
+预测结果为：
+
+```bash
+('我你告诉她？发短信还是打电话？', 0.8164891742422521)
+('我难过，安慰我', 0.5596837521537591)
+('嗯会的', 0.595637918475396)
+```
+
+### mt
+
+#### 训练
+
+```python
+from lightnlp.tg import MT
+
+mt_model = MT()
+
+train_path = '/home/lightsmile/NLP/corpus/translation/mt.train.sample.tsv'
+dev_path = '/home/lightsmile/NLP/corpus/translation/mt.test.sample.tsv'
+source_vec_path = '/home/lightsmile/NLP/embedding/english/glove.6B.100d.txt'
+target_vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+
+mt_model.train(train_path, source_vectors_path=source_vec_path, target_vectors_path=target_vec_path,
+               dev_path=train_path, save_path='./mt_saves')
+```
+
+#### 测试
+
+```python
+mt_model.load('./mt_saves')
+
+mt_model.test(train_path)
+```
+
+#### 预测
+
+```python
+print(mt_model.predict('Hello!'))
+print(mt_model.predict('Wait!'))
+```
+
+预测结果为：
+
+```bash
+('你好。', 0.6664615107892047)
+('！', 0.661789059638977)
+```
+
+### ts
+
+#### 训练
+
+```python
+from lightnlp.tg import TS
+
+ts_model = TS()
+
+train_path = '/home/lightsmile/NLP/corpus/text_summarization/ts.train.sample.tsv'
+dev_path = '/home/lightsmile/NLP/corpus/text_summarization/ts.test.sample.tsv'
+vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+
+ts_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./ts_saves')
+```
+
+#### 测试
+
+```python
+ts_model.load('./ts_saves')
+
+ts_model.test(train_path)
+```
+
+#### 预测
+
+```python
+test_str = """
+            近日，因天气太热，安徽一老太在买肉路上突然眼前一黑，摔倒在地。她怕别人不扶她，连忙说"快扶我起来，我不讹你，地上太热我要熟了！"这一喊周围人都笑了，老人随后被扶到路边休息。(颍州晚报)[话筒]最近老人尽量避免出门!
+            """
+
+print(ts_model.predict(test_str))
+```
+
+预测结果为：
+
+```bash
+('，我不讹你，地上太热我要熟了！[允悲]', 0.03261186463844203)
+```
+
 ### 词向量
 
 本框架也提供了类似gensim的加载词向量并得到相似词汇的功能，使用示例如下：
@@ -1085,8 +1260,10 @@ print(word_vectors.get_similar_words('少女', dis_type='cos'))
     - re, 关系抽取
     - sa，情感分析
 - tg，文本生成
+    - cb, 聊天机器人
     - lm，语言模型
     - mt，机器翻译
+    - ts，文本摘要
 - utils
 - we，词向量
     - cbow， 词袋模型
@@ -1136,11 +1313,13 @@ print(word_vectors.get_similar_words('少女', dis_type='cos'))
 - [x] 增加事件抽取相关模型以及训练预测代码
 - [ ] 增加属性抽取相关模型以及训练预测代码
 - [ ] 增加指代消解相关模型以及训练预测代码
-- [ ] 增加自动摘要相关模型以及训练预测代码 
+- [x] 增加自动摘要相关模型以及训练预测代码 
+- [x] 增加机器翻译相关模型以及训练预测代码 
 - [ ] 增加阅读理解相关模型以及训练预测代码
 - [x] 增加句子相似度相关模型以及训练预测代码
-- [ ] 增加序列到序列相关模型以及训练预测代码
+- [x] 增加序列到序列相关模型以及训练预测代码
 - [ ] 增加关键词抽取相关模型以及训练预测代码
+- [x] 增加聊天机器人相关模型以及训练预测代码
 - [x] 增加命名实体识别相关模型以及预测训练代码
 
 ## 参考
@@ -1149,7 +1328,9 @@ print(word_vectors.get_similar_words('少女', dis_type='cos'))
 
 - [What's the difference between “hidden” and “output” in PyTorch LSTM?](https://stackoverflow.com/questions/48302810/whats-the-difference-between-hidden-and-output-in-pytorch-lstm)
 - [What's the difference between LSTM() and LSTMCell()?](https://stackoverflow.com/questions/48187283/whats-the-difference-between-lstm-and-lstmcell)
+- [What is the difference between Luong Attention and Bahdanau Attention?](https://stackoverflow.com/questions/44238154/what-is-the-difference-between-luong-attention-and-bahdanau-attention)
 - [深度学习框架技术剖析[转]](https://aiuai.cn/aifarm904.html)
+- [Attention? Attention!](https://lilianweng.github.io/lil-log/2018/06/24/attention-attention.html)
 
 ### NLP
 
@@ -1198,6 +1379,9 @@ print(word_vectors.get_similar_words('少女', dis_type='cos'))
 
 - [Chinese-Literature-NER-RE-Dataset](https://github.com/lancopku/Chinese-Literature-NER-RE-Dataset)
 - [ChineseTextualInference](https://github.com/liuhuanyong/ChineseTextualInference)
+- [中文短文本摘要数据集](https://www.jianshu.com/p/8f52352f0748)
+- [机器翻译语料库大全(免费下)](https://mlln.cn/2018/08/26/%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E8%AF%AD%E6%96%99%E5%BA%93%E5%A4%A7%E5%85%A8(%E5%85%8D%E8%B4%B9%E4%B8%8B)/)
+- [中文公开聊天语料库](https://github.com/codemayq/chinese_chatbot_corpus)
 
 ### 序列标注
 
@@ -1285,6 +1469,13 @@ print(word_vectors.get_similar_words('少女', dis_type='cos'))
 
 - [ASReader：一个经典的机器阅读理解深度学习模型](https://www.imooc.com/article/28709)
 
+### 聊天机器人
+
+- [ywk991112 / pytorch-chatbot](https://github.com/ywk991112/pytorch-chatbot)
+- [keon / seq2seq](https://github.com/keon/seq2seq)
+- [bentrevett / pytorch-seq2seq](https://github.com/bentrevett/pytorch-seq2seq)
+- [IBM / pytorch-seq2seq](https://github.com/IBM/pytorch-seq2seq)
+
 ### 其他
 
 - [基于距离的算法 曼哈顿，欧氏等](https://www.jianshu.com/p/bbe6dfac9bc7)
@@ -1296,3 +1487,4 @@ print(word_vectors.get_similar_words('少女', dis_type='cos'))
 - [Python3:ImportError: No module named 'compiler.ast'](https://blog.csdn.net/w5688414/article/details/78489277)
 - [Automated Python 2 to 3 code translation](https://docs.python.org/2/library/2to3.html)
 - [git 拉取远程分支到本地](https://blog.csdn.net/carfge/article/details/79691360)
+- [OpenCC - 简体繁体转换](https://www.jianshu.com/p/834a02d085b6)

@@ -1,5 +1,5 @@
 import torch
-from torchtext.data import Dataset, Field, BucketIterator, ReversibleField
+from torchtext.data import Dataset, Field, BucketIterator
 from torchtext.vocab import Vectors
 from torchtext.datasets import SequenceTaggingDataset
 from sklearn.metrics import f1_score, accuracy_score, recall_score, precision_score
