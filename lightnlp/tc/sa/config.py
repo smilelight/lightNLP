@@ -1,7 +1,7 @@
 from ...base.config import DEVICE
 DEFAULT_CONFIG = {
     'lr': 0.02,
-    'epoch': 5,
+    'epoch': 10,
     'lr_decay': 0.05,
     'batch_size': 128,
     'dropout': 0.5,

@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
+from torch.utils.tensorboard import SummaryWriter
 
 from ...utils.learning import adjust_learning_rate
 from ...utils.log import logger
@@ -24,7 +25,9 @@ class SA(Module):
         self._word_vocab = None
         self._label_vocab = None
     
-    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, **kwargs):
+    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, log_dir=None,
+              **kwargs):
+        writer = SummaryWriter(log_dir=log_dir)
         train_dataset = sa_tool.get_dataset(train_path)
         if dev_path:
             dev_dataset = sa_tool.get_dataset(dev_path)
@@ -36,6 +39,10 @@ class SA(Module):
         train_iter = sa_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
         config = Config(word_vocab, label_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
         textcnn = TextCNN(config)
+        # temp = torch.randint(1, 100, (128, 32)).to(DEVICE)
+        # writer.add_graph(textcnn, (torch.randint(1, 100, (128, 32)).to(DEVICE)))
+        writer.add_graph(textcnn, (next(iter(train_iter))).text)
+        writer.flush()
         # print(textcnn)
         self._model = textcnn
         optim = torch.optim.Adam(textcnn.parameters(), lr=config.lr)
@@ -50,10 +57,14 @@ class SA(Module):
                 item_loss.backward()
                 optim.step()
             logger.info('epoch: {}, acc_loss: {}'.format(epoch, acc_loss))
+            writer.add_scalar('train/acc_loss', acc_loss, epoch)
             if dev_path:
                 dev_score = self._validate(dev_dataset)
                 logger.info('dev score:{}'.format(dev_score))
+                writer.add_scalar('train/dev_score', dev_score, epoch)
+            writer.flush()
             adjust_learning_rate(optim, config.lr / (1 + (epoch + 1) * config.lr_decay))
+        writer.close()
         config.save()
         textcnn.save()
 
