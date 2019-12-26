@@ -2,13 +2,14 @@ from lightnlp.tc import SA
 
 sa_model = SA()
 
-train_path = '/home/lightsmile/Projects/NLP/chinese_text_cnn/data/train.sample.tsv'
-dev_path = '/home/lightsmile/Projects/NLP/chinese_text_cnn/data/dev.sample.tsv'
-vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+train_path = 'D:/Data/NLP/corpus/sa/train.sample.tsv'
+dev_path = 'D:/Data/NLP/corpus/sa/dev.sample.tsv'
+vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
-# sa_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./sa_saves')
+sa_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./sa_saves',
+               log_dir='E:/Test/tensorboard/')
 
-sa_model.load('./sa_saves')
+# sa_model.load('./sa_saves')
 
 from pprint import pprint
 

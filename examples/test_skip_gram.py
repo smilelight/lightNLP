@@ -4,8 +4,8 @@ from lightnlp.we import SkipGramBaseModule, SkipGramNegativeSamplingModule, Skip
 skip_gram_model = SkipGramNegativeSamplingModule()
 # skip_gram_model = SkipGramBaseModule()
 
-train_path = '/home/lightsmile/NLP/corpus/novel/test.txt'
-dev_path = '/home/lightsmile/NLP/corpus/novel/test.txt'
+train_path = 'D:/Data/NLP/corpus/novel/test.txt'
+dev_path = 'D:/Data/NLP/corpus/novel/test.txt'
 
 skip_gram_model.train(train_path, dev_path=dev_path, save_path='./skip_gram_saves')
 

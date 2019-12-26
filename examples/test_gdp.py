@@ -1,12 +1,12 @@
 import sys
-sys.path.append('/home/lightsmile/Projects/MyGithub/lightNLP')
+sys.path.append('E:/Projects/myProjects/lightNLP')
 
 from lightnlp.sp import GDP
 
 gdp_model = GDP()
 
-train_path = '/home/lightsmile/NLP/corpus/dependency_parse/gdp/THU/train.sample.conll'
-vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+train_path = 'D:/Data/NLP/corpus/gdp/train.sample.conll'
+vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
 
 # gdp_model.train(train_path, dev_path=train_path, vectors_path=vec_path, save_path='./gdp_saves')

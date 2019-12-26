@@ -2,13 +2,13 @@ from lightnlp.tg import CB
 
 cb_model = CB()
 
-train_path = '/home/lightsmile/NLP/corpus/chatbot/chat.train.sample.tsv'
-dev_path = '/home/lightsmile/NLP/corpus/chatbot/chat.test.sample.tsv'
-vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+train_path = 'D:/Data/NLP/corpus/chatbot/chat.train.sample.tsv'
+dev_path = 'D:/Data/NLP/corpus/chatbot/chat.test.sample.tsv'
+vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
-# cb_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./cb_saves')
+cb_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./cb_saves')
 
-cb_model.load('./cb_saves')
+# cb_model.load('./cb_saves')
 
 # cb_model.test(train_path)
 

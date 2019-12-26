@@ -1,18 +1,18 @@
 import sys
-sys.path.append('/home/lightsmile/Projects/MyGithub/lightNLP')
+sys.path.append('E:/Projects/myProjects/lightNLP')
 
 from lightnlp.sr import SS
 
 ss_model = SS()
 
-train_path = '/home/lightsmile/Projects/NLP/sentence-similarity/input/atec/ss_train.tsv'
-dev_path = '/home/lightsmile/Projects/NLP/sentence-similarity/input/atec/ss_dev.tsv'
-vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
+train_path = 'D:/Data/NLP/corpus/ss/ss_train.tsv'
+dev_path = 'D:/Data/NLP/corpus/ss/ss_dev.tsv'
+vec_path = 'D:/Data/NLP/embedding/char/token_vec_300.bin'
 
-# ss_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./ss_saves')
+ss_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./ss_saves')
 
 
-ss_model.load('./ss_saves')
+# ss_model.load('./ss_saves')
 # ss_model.test(dev_path)
 
 print(float(ss_model.predict('花呗收款收不了怎么办', '开通花呗收款为何不能用')))

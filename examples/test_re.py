@@ -1,11 +1,11 @@
 import sys
-sys.path.append('/home/lightsmile/Projects/MyGithub/lightNLP')
+sys.path.append('E:/Projects/myProjects/lightNLP')
 
 from lightnlp.tc.re.tool import re_tool
 
-train_path = '/home/lightsmile/Projects/NLP/ChineseNRE/data/people-relation/train.sample.txt'
-dev_path = '/home/lightsmile/Projects/NLP/ChineseNRE/data/people-relation/test.sample.txt'
-vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+train_path = 'D:/Data/NLP/corpus/re/train.sample.txt'
+dev_path = 'D:/Data/NLP/corpus/re/test.sample.txt'
+vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
 # data_set = re_tool.get_dataset(train_path)
 #

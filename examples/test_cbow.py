@@ -4,12 +4,12 @@ from lightnlp.we import CBOWHierarchicalSoftmaxModule, CBOWNegativeSamplingModul
 cbow_model = CBOWBaseModule()
 # cbow_model = CBOWNegativeSamplingModule()
 
-train_path = '/home/lightsmile/NLP/corpus/novel/test.txt'
-dev_path = '/home/lightsmile/NLP/corpus/novel/test.txt'
+train_path = 'D:/Data/NLP/corpus/novel/test.txt'
+dev_path = 'D:/Data/NLP/corpus/novel/test.txt'
 
 cbow_model.train(train_path, dev_path=dev_path, save_path='./cbow_saves')
 
-cbow_model.load('./cbow_saves')
+# cbow_model.load('./cbow_saves')
 #
 # cbow_model.test(dev_path)
 

@@ -2,9 +2,9 @@ from lightnlp.tg import TS
 
 ts_model = TS()
 
-train_path = '/home/lightsmile/NLP/corpus/text_summarization/ts.train.sample.tsv'
-dev_path = '/home/lightsmile/NLP/corpus/text_summarization/ts.test.sample.tsv'
-vec_path = '/home/lightsmile/NLP/embedding/word/sgns.zhihu.bigram-char'
+train_path = 'D:/Data/NLP/corpus/ts/train.sample.tsv'
+dev_path = 'D:/Data/NLP/corpus/ts/test.sample.tsv'
+vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
 # ts_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./ts_saves')
 

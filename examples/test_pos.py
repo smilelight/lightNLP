@@ -1,13 +1,13 @@
 import sys
-sys.path.append('/home/lightsmile/Projects/MyGithub/lightNLP')
+sys.path.append('E:/Projects/myProjects/lightNLP')
 
 from lightnlp.sl import POS
 
 pos_model = POS()
 
-train_path = '/home/lightsmile/NLP/corpus/pos/train.sample.txt'
-dev_path = '/home/lightsmile/NLP/corpus/pos/test.sample.txt'
-vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
+train_path = 'D:/Data/NLP/corpus/pos/train.sample.txt'
+dev_path = 'D:/Data/NLP/corpus/pos/test.sample.txt'
+vec_path = 'D:/Data/NLP/embedding/char/token_vec_300.bin'
 
 # pos_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./pos_saves')
 
