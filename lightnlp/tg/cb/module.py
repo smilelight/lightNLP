@@ -4,6 +4,10 @@ import torch.nn.functional as F
 from torch.nn.utils import clip_grad_norm_
 from torch.utils.tensorboard import SummaryWriter
 
+import flask
+from flask import Flask, request
+
+from ...utils.deploy import get_free_tcp_port
 from ...utils.learning import adjust_learning_rate
 from ...utils.log import logger
 from ...base.module import Module
@@ -110,3 +114,22 @@ class CB(Module):
             else:
                 break
         return ''.join(result_sentence), result_score
+
+    def deploy(self, route_path="/cb", host="localhost", port=None, debug=False):
+        app = Flask(__name__)
+
+        @app.route(route_path + "/predict", methods=['POST', 'GET'])
+        def predict():
+            text = request.args.get('text', '')
+            max_len = int(request.args.get('max_len', 10))
+            result = self.predict(text, max_len)
+            return flask.jsonify({
+                'state': 'OK',
+                'result': {
+                    'result': result[0],
+                    'score': result[1]
+                }
+            })
+        if not port:
+            port = get_free_tcp_port()
+        app.run(host=host, port=port, debug=debug)

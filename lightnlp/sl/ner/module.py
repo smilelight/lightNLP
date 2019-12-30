@@ -2,6 +2,10 @@ import torch
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
+import flask
+from flask import Flask, request
+
+from ...utils.deploy import get_free_tcp_port
 from ...utils.learning import adjust_learning_rate
 from ...utils.log import logger
 from ...base.module import Module
@@ -91,3 +95,20 @@ class NER(Module):
             item_score = ner_tool.get_score(self._model, dev_item.text, dev_item.tag, self._word_vocab, self._tag_vocab)
             dev_score_list.append(item_score)
         return sum(dev_score_list) / len(dev_score_list)
+
+    def deploy(self, route_path="/ner", host="localhost", port=None, debug=False):
+        app = Flask(__name__)
+
+        @app.route(route_path + "/predict", methods=['POST', 'GET'])
+        def predict():
+            text = request.args.get('text', '')
+            result = self.predict(text)
+            return flask.jsonify({
+                'state': 'OK',
+                'result': {
+                    'result': result
+                }
+            })
+        if not port:
+            port = get_free_tcp_port()
+        app.run(host=host, port=port, debug=debug)

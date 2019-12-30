@@ -4,6 +4,10 @@ import torch.nn.functional as F
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
+import flask
+from flask import Flask, request
+
+from ...utils.deploy import get_free_tcp_port
 from ...utils.log import logger
 from ...base.module import Module
 
@@ -157,3 +161,22 @@ class GDP(Module):
         pred_rels = s_rel[torch.arange(len(s_rel)), pred_arcs].argmax(dim=-1)
 
         return pred_arcs, pred_rels
+
+    def deploy(self, route_path="/cb", host="localhost", port=None, debug=False):
+        app = Flask(__name__)
+
+        @app.route(route_path + "/predict", methods=['POST', 'GET'])
+        def predict():
+            words = request.args.get('words', '')
+            pos = request.args.get('pos', '')
+            result = self.predict(words, pos)
+            return flask.jsonify({
+                'state': 'OK',
+                'result': {
+                    'arcs': result[0],
+                    'rels': result[1]
+                }
+            })
+        if not port:
+            port = get_free_tcp_port()
+        app.run(host=host, port=port, debug=debug)

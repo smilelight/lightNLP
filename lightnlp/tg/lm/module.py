@@ -3,6 +3,10 @@ from tqdm import tqdm
 import torch.nn.functional as F
 from torch.utils.tensorboard import SummaryWriter
 
+import flask
+from flask import Flask, request
+
+from ...utils.deploy import get_free_tcp_port
 from ...utils.learning import adjust_learning_rate
 from ...utils.log import logger
 from ...base.module import Module
@@ -147,3 +151,57 @@ class LM(Module):
         results = self._predict_sentence(sentence, gen_len)
         predict_sen = ''.join([x for x in results])
         return sentence + predict_sen
+
+    def deploy(self, route_path="/lm", host="localhost", port=None, debug=False):
+        app = Flask(__name__)
+
+        @app.route(route_path + "/next_word", methods=['POST', 'GET'])
+        def next_word():
+            sentence = request.args.get('sentence', '')
+            word = request.args.get('word', '')
+            result = self.next_word(sentence, word)
+            return flask.jsonify({
+                'state': 'OK',
+                'result': {
+                    'prob': result
+                }
+            })
+
+        @app.route(route_path + "/generate_sentence", methods=['POST', 'GET'])
+        def generate_sentence():
+            sentence = request.args.get('sentence', '')
+            gen_len = int(request.args.get('gen_len', 30))
+            result = self.generate_sentence(sentence, gen_len)
+            return flask.jsonify({
+                'state': 'OK',
+                'result': {
+                    'sentence': result
+                }
+            })
+
+        @app.route(route_path + "/next_word_topk", methods=['POST', 'GET'])
+        def next_word_topk():
+            sentence = request.args.get('sentence', '')
+            topk = int(request.args.get('topk', 5))
+            result = self.next_word_topk(sentence, topK=topk)
+            return flask.jsonify({
+                'state': 'OK',
+                'result': {
+                    'words': result
+                }
+            })
+
+        @app.route(route_path + "/sentence_score", methods=['POST', 'GET'])
+        def sentence_score():
+            sentence = request.args.get('sentence', '')
+            result = self.sentence_score(sentence)
+            return flask.jsonify({
+                'state': 'OK',
+                'result': {
+                    'score': result
+                }
+            })
+
+        if not port:
+            port = get_free_tcp_port()
+        app.run(host=host, port=port, debug=debug)

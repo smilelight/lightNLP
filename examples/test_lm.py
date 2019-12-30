@@ -10,11 +10,11 @@ train_path = '../data/lm/lm_test.txt'
 dev_path = '../data/lm/lm_test.txt'
 vec_path = 'D:/Data/NLP/embedding/char/token_vec_300.bin'
 
-lm_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./lm_saves',
-               log_dir='E:/Test/tensorboard/')
+# lm_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./lm_saves',
+#                log_dir='E:/Test/tensorboard/')
 
-# lm_model.load('./lm_saves')
-
+lm_model.load('./lm_saves')
+lm_model.deploy()
 # lm_model.test(train_path)
 
 # print(lm_model.next_word('要不是', '萧'))

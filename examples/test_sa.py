@@ -10,13 +10,15 @@ train_path = '../data/sa/train.sample.tsv'
 dev_path = '../data/sa/dev.sample.tsv'
 vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
-sa_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./sa_saves',
-               log_dir='E:/Test/tensorboard/')
+# sa_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./sa_saves',
+#                log_dir='E:/Test/tensorboard/')
 
-# sa_model.load('./sa_saves')
+sa_model.load('./sa_saves')
 
-from pprint import pprint
+sa_model.deploy(debug=True)
 
-sa_model.test(train_path)
-
-pprint(sa_model.predict('外观漂亮，安全性佳，动力够强，油耗够低。'))
+# from pprint import pprint
+#
+# sa_model.test(train_path)
+#
+# pprint(sa_model.predict('外观漂亮，安全性佳，动力够强，油耗够低。'))

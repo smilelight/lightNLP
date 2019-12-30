@@ -3,6 +3,10 @@ import torch.nn.functional as F
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
+import flask
+from flask import Flask, request
+
+from ...utils.deploy import get_free_tcp_port
 from ...utils.learning import adjust_learning_rate
 from ...utils.log import logger
 from ...base.module import Module
@@ -111,3 +115,20 @@ class TDP(Module):
             TEXT.vocab = self._word_vocab
         if not hasattr(ACTION, 'vocab'):
             ACTION.vocab = self._action_vocab
+
+    def deploy(self, route_path="/tdp", host="localhost", port=None, debug=False):
+        app = Flask(__name__)
+
+        @app.route(route_path + '/predict', methods=['POST', 'GET'])
+        def predict():
+            text = request.args.get('text', '')
+            result = self.predict(text)
+            return flask.jsonify({
+                    'state': 'OK',
+                    'result': {
+                        'results': result
+                        }
+                })
+        if not port:
+            port = get_free_tcp_port()
+        app.run(host=host, port=port, debug=debug)

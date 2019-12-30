@@ -3,6 +3,10 @@ from tqdm import tqdm
 from typing import List
 from torch.utils.tensorboard import SummaryWriter
 
+import flask
+from flask import Flask, request
+
+from ....utils.deploy import get_free_tcp_port
 from ....utils.learning import adjust_learning_rate
 from ....utils.log import logger
 from ....base.module import Module
@@ -133,3 +137,34 @@ class CBOWNegativeSamplingModule(Module):
     def _check_vocab(self):
         if not hasattr(WORD, 'vocab'):
             WORD.vocab = self._word_vocab
+
+    def deploy(self, route_path="/cbow", host="localhost", port=None, debug=False):
+        app = Flask(__name__)
+
+        @app.route(route_path + "/predict", methods=['POST', 'GET'])
+        def predict():
+            print(request.args)
+            words = request.args.get('words', [])
+            result = self.predict(words)
+            return flask.jsonify({
+                    'state': 'OK',
+                    'result': {
+                        'word': result
+                        }
+                })
+
+        @app.route(route_path + "/evaluate", methods=['POST', 'GET'])
+        def evaluate():
+            print(request.args)
+            context = request.args.get('context', '')
+            word = request.args.get('word', '')
+            result = self.evaluate(context, word)
+            return flask.jsonify({
+                    'state': 'OK',
+                    'result': {
+                        'score': result
+                        }
+                })
+        if not port:
+            port = get_free_tcp_port()
+        app.run(host=host, port=port, debug=debug)

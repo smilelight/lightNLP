@@ -17,3 +17,7 @@ class Module(metaclass=ABCMeta):
     @abstractclassmethod
     def test(cls, *args, **kwargs):
         pass
+
+    @abstractclassmethod
+    def deploy(cls, *args, **kwargs):
+        pass

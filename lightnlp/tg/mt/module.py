@@ -4,6 +4,10 @@ import torch.nn.functional as F
 from torch.nn.utils import clip_grad_norm_
 from torch.utils.tensorboard import SummaryWriter
 
+import flask
+from flask import Flask, request
+
+from ...utils.deploy import get_free_tcp_port
 from ...utils.learning import adjust_learning_rate
 from ...utils.log import logger
 from ...base.module import Module
@@ -19,8 +23,8 @@ class MT(Module):
         self._source_vocab = None
         self._target_vocab = None
 
-    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, log_dir=None,
-              **kwargs):
+    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, source_vectors_path=None,
+              target_vectors_path=None, log_dir=None, **kwargs):
         writer = SummaryWriter(log_dir=log_dir)
         train_dataset = mt_tool.get_dataset(train_path)
         if dev_path:
@@ -116,3 +120,21 @@ class MT(Module):
             else:
                 break
         return ''.join(result_sentence), result_score
+
+    def deploy(self, route_path="/mt", host="localhost", port=None, debug=False):
+        app = Flask(__name__)
+
+        @app.route(route_path + "/predict", methods=['POST', 'GET'])
+        def predict():
+            text = request.args.get('text', '')
+            result = self.predict(text)
+            return flask.jsonify({
+                'state': 'OK',
+                'result': {
+                    'result': result[0],
+                    'score': result[1]
+                }
+            })
+        if not port:
+            port = get_free_tcp_port()
+        app.run(host=host, port=port, debug=debug)
