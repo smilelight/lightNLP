@@ -18,5 +18,5 @@ DEFAULT_CONFIG = {
     'word_vocab': None,
     'pos_vocab': None,
     'tag_vocab': None,
-    'save_path': './saves'
+    'save_path': './srl_saves'
 }

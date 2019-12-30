@@ -13,7 +13,7 @@ DEFAULT_CONFIG = {
     'vector_path': '',
     'vocabulary_size': 0,
     'word_vocab': None,
-    'save_path': './saves',
+    'save_path': './ts_saves',
     'method': 'dot',
     'teacher_forcing_ratio': 0.5
 }

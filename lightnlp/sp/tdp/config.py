@@ -14,7 +14,7 @@ DEFAULT_CONFIG = {
     'vocabulary_size': 0,
     'word_vocab': None,
     'action_vocab': None,
-    'save_path': './saves',
+    'save_path': './tdp_saves',
     'embedding_type': 'lstm',
     'embedding_lstm_layers': 1,
     'embedding_lstm_dropout': 0.0,

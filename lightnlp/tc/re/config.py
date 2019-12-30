@@ -13,7 +13,7 @@ DEFAULT_CONFIG = {
     'vocabulary_size': 0,
     'word_vocab': None,
     'tag_vocab': None,
-    'save_path': './saves',
+    'save_path': './re_saves',
     'filter_num': 100,
     'filter_sizes': (3, 4, 5),
     'multichannel': False

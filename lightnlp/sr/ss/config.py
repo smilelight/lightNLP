@@ -16,5 +16,5 @@ DEFAULT_CONFIG = {
     'vocabulary_size': 0,
     'word_vocab': None,
     'tag_vocab': None,
-    'save_path': './saves'
+    'save_path': './ss_saves'
 }

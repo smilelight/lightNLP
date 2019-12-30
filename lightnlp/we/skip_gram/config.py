@@ -15,7 +15,7 @@ DEFAULT_CONFIG = {
     'embedding_dim': 300,
     'vocabulary_size': 0,
     'word_vocab': None,
-    'save_path': './saves',
+    'save_path': './skip_gram_saves',
     'window_size': 3,
     'neg_num': 3,
     'feature': Feature.hierarchical_softmax

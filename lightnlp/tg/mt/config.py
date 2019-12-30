@@ -18,7 +18,7 @@ DEFAULT_CONFIG = {
     'target_vocabulary_size': 0,
     'source_word_vocab': None,
     'target_word_vocab': None,
-    'save_path': './saves',
+    'save_path': './mt_saves',
     'method': 'dot',
     'teacher_forcing_ratio': 0.5
 }

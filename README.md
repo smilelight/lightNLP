@@ -55,10 +55,10 @@ pip install https://github.com/pytorch/text/archive/master.zip
 
 - [x] 重构项目结构，将相同冗余的地方合并起来，保持项目结构清晰
 - [x] 增加TensorBoard可视化功能，主要包含如loss和score的`scalar`和以及各model的`graph`（目前Pytorch中的SummaryWriter的add_graph功能有一些bug，所以暂时添加不了了。）。
-- [ ] 增加简易的基于flask的模型部署功能（当前仅用于模型的训练效果测试）
+- [x] 增加简易的基于flask的模型部署功能（当前仅用于模型的训练效果测试）
+- [x] 现在模型保存的路径和名字默认一致，会冲突，接下来每个模型都有自己的`name`。
 - [ ] 增加断点重训功能。
 - [ ] 增加earlyStopping。
-- [ ] 现在模型保存的路径和名字默认一致，会冲突，接下来每个模型都有自己的`name`。
 
 ### 功能
 

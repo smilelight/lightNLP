@@ -23,7 +23,7 @@ DEFAULT_CONFIG = {
     'word_vocab': None,
     'pos_vocab': None,
     'ref_vocab': None,
-    'save_path': './saves',
+    'save_path': './gdp_saves',
     'pos_dim': 100,
     'lstm_hidden': 400,
     'lstm_layers': 3,
