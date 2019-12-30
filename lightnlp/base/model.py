@@ -14,11 +14,11 @@ class BaseConfig(object):
     
     @staticmethod
     def load(path=DEFAULT_CONFIG['save_path']):
-        config = None
         config_path = os.path.join(path, 'config.pkl')
         with open(config_path, 'rb') as f:
             config = pickle.load(f)
         logger.info('loadding config from {}'.format(config_path))
+        config.save_path = path
         return config
     
     def save(self, path=None):
