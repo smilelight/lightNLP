@@ -1,6 +1,6 @@
 import torch
 from tqdm import tqdm
-from typing import List
+from torch.utils.tensorboard import SummaryWriter
 
 from ....utils.learning import adjust_learning_rate
 from ....utils.log import logger
@@ -29,7 +29,9 @@ class SkipGramHierarchicalSoftmaxModule(Module):
         self.huffman_pos_path = None
         self.huffman_neg_path = None
 
-    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, **kwargs):
+    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, log_dir=None,
+              **kwargs):
+        writer = SummaryWriter(log_dir=log_dir)
         train_dataset = skip_gram_tool.get_dataset(train_path)
         if dev_path:
             dev_dataset = skip_gram_tool.get_dataset(dev_path)
@@ -70,10 +72,14 @@ class SkipGramHierarchicalSoftmaxModule(Module):
                 item_loss.backward()
                 optim.step()
             logger.info('epoch: {}, acc_loss: {}'.format(epoch, acc_loss))
+            writer.add_scalar('skip_gram_hs_train/acc_loss', acc_loss, epoch)
             if dev_path:
                 dev_score = self._validate(dev_dataset)
                 logger.info('dev score:{}'.format(dev_score))
+                writer.add_scalar('skip_gram_hs_train/dev_score', dev_score, epoch)
+            writer.flush()
             adjust_learning_rate(optim, config.lr / (1 + (epoch + 1) * config.lr_decay))
+        writer.close()
         config.save()
         skip_gram.save()
 

@@ -1,15 +1,17 @@
+import os
 import sys
-sys.path.append('E:/Projects/myProjects/lightNLP')
+sys.path.append(os.path.split(os.path.realpath(__file__))[0])
 
 from lightnlp.sl import CWS
 
 cws_model = CWS()
 
-train_path = 'D:/Data/NLP/corpus/cws/train.sample.txt'
-dev_path = 'D:/Data/NLP/corpus/cws/test.sample.txt'
+train_path = '../data/cws/train.sample.txt'
+dev_path = '../data/corpus/cws/test.sample.txt'
 vec_path = 'D:/Data/NLP/embedding/char/token_vec_300.bin'
 
-# cws_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./cws_saves')
+cws_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./cws_saves',
+                log_dir='E:/Test/tensorboard/')
 
 cws_model.load('./cws_saves')
 

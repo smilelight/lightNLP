@@ -1,6 +1,6 @@
 import re
 import torch
-from torchtext.data import TabularDataset, Field, Iterator, Dataset, BucketIterator
+from torchtext.data import TabularDataset, Field, Dataset, BucketIterator
 from torchtext.vocab import Vectors
 from sklearn.metrics import f1_score, accuracy_score, recall_score, precision_score
 

@@ -2,6 +2,7 @@ import torch
 from tqdm import tqdm
 import torch.nn.functional as F
 from torch.nn.utils import clip_grad_norm_
+from torch.utils.tensorboard import SummaryWriter
 
 from ...utils.learning import adjust_learning_rate
 from ...utils.log import logger
@@ -17,7 +18,9 @@ class TS(Module):
         self._model = None
         self._word_vocab = None
 
-    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, **kwargs):
+    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, log_dir=None,
+              **kwargs):
+        writer = SummaryWriter(log_dir=log_dir)
         train_dataset = ts_tool.get_dataset(train_path)
         if dev_path:
             dev_dataset = ts_tool.get_dataset(dev_path)
@@ -48,11 +51,15 @@ class TS(Module):
                 item_loss.backward()
                 clip_grad_norm_(tsseq2seq.parameters(), config.clip)
                 optim.step()
+            print('epoch:{}, acc_loss:{}'.format(epoch, acc_loss))
+            writer.add_scalar('ts_train/acc_loss', acc_loss, epoch)
             if dev_path:
                 dev_score = self._validate(dev_dataset)
                 logger.info('dev score:{}'.format(dev_score))
-            print('epoch:{}, acc_loss:{}'.format(epoch, acc_loss))
+                writer.add_scalar('ts_train/dev_score', dev_score, epoch)
+            writer.flush()
             adjust_learning_rate(optim, config.lr / (1 + (epoch + 1) * config.lr_decay))
+        writer.close()
         config.save()
         tsseq2seq.save()
 

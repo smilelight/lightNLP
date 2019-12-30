@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
+from torch.utils.tensorboard import SummaryWriter
 
 from ...utils.learning import adjust_learning_rate
 from ...utils.log import logger
@@ -25,7 +26,8 @@ class RE(Module):
         self._word_vocab = None
         self._label_vocab = None
 
-    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, **kwargs):
+    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, log_dir=None, **kwargs):
+        writer = SummaryWriter(log_dir=log_dir)
         train_dataset = re_tool.get_dataset(train_path)
         if dev_path:
             dev_dataset = re_tool.get_dataset(dev_path)
@@ -38,23 +40,29 @@ class RE(Module):
         config = Config(word_vocab, label_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
         textcnn = TextCNN(config)
         # print(textcnn)
+        writer.add_graph(textcnn, (next(iter(train_iter))).text)
+        writer.flush()
         self._model = textcnn
         optim = torch.optim.Adam(textcnn.parameters(), lr=config.lr)
         for epoch in range(config.epoch):
             textcnn.train()
             acc_loss = 0
-            for fuck in tqdm(train_iter):
+            for item in tqdm(train_iter):
                 optim.zero_grad()
-                logits = self._model(fuck.text)
-                item_loss = F.cross_entropy(logits, fuck.label)
+                logits = self._model(item.text)
+                item_loss = F.cross_entropy(logits, item.label)
                 acc_loss += item_loss.item()
                 item_loss.backward()
                 optim.step()
             logger.info('epoch: {}, acc_loss: {}'.format(epoch, acc_loss))
+            writer.add_scalar('re_train/acc_loss', acc_loss, epoch)
             if dev_path:
                 dev_score = self._validate(dev_dataset)
                 logger.info('dev score:{}'.format(dev_score))
+                writer.add_scalar('re_train/dev_score', dev_score, epoch)
+            writer.flush()
             adjust_learning_rate(optim, config.lr / (1 + (epoch + 1) * config.lr_decay))
+        writer.flush()
         config.save()
         textcnn.save()
 

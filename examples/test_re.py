@@ -1,10 +1,11 @@
+import os
 import sys
-sys.path.append('E:/Projects/myProjects/lightNLP')
+sys.path.append(os.path.split(os.path.realpath(__file__))[0])
 
 from lightnlp.tc.re.tool import re_tool
 
-train_path = 'D:/Data/NLP/corpus/re/train.sample.txt'
-dev_path = 'D:/Data/NLP/corpus/re/test.sample.txt'
+train_path = '../data/re/train.sample.txt'
+dev_path = '../data/re/test.sample.txt'
 vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
 # data_set = re_tool.get_dataset(train_path)
@@ -19,7 +20,8 @@ from lightnlp.tc import RE
 
 re = RE()
 
-re.train(train_path, dev_path=train_path, vectors_path=vec_path, save_path='./re_saves')
+re.train(train_path, dev_path=train_path, vectors_path=vec_path, save_path='./re_saves',
+         log_dir='E:/Test/tensorboard/')
 
 re.load('./re_saves')
 # re.test(dev_path)

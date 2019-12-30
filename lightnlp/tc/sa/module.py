@@ -57,11 +57,11 @@ class SA(Module):
                 item_loss.backward()
                 optim.step()
             logger.info('epoch: {}, acc_loss: {}'.format(epoch, acc_loss))
-            writer.add_scalar('train/acc_loss', acc_loss, epoch)
+            writer.add_scalar('sa_train/acc_loss', acc_loss, epoch)
             if dev_path:
                 dev_score = self._validate(dev_dataset)
                 logger.info('dev score:{}'.format(dev_score))
-                writer.add_scalar('train/dev_score', dev_score, epoch)
+                writer.add_scalar('sa_train/dev_score', dev_score, epoch)
             writer.flush()
             adjust_learning_rate(optim, config.lr / (1 + (epoch + 1) * config.lr_decay))
         writer.close()

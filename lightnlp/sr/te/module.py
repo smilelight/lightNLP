@@ -1,12 +1,7 @@
-import re
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-from torchtext.data import TabularDataset, Field, Iterator, Dataset, BucketIterator
-from torchtext.vocab import Vectors
-from sklearn.metrics import f1_score, accuracy_score, recall_score, precision_score
-from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from tqdm import tqdm
+from torch.utils.tensorboard import SummaryWriter
 
 from ...utils.learning import adjust_learning_rate
 from ...utils.log import logger
@@ -31,7 +26,9 @@ class TE(Module):
         self._word_vocab = None
         self._label_vocab = None
 
-    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, **kwargs):
+    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, log_dir=None,
+              **kwargs):
+        writer = SummaryWriter(log_dir=log_dir)
         train_dataset = te_tool.get_dataset(train_path)
         if dev_path:
             dev_dataset = te_tool.get_dataset(dev_path)
@@ -58,11 +55,14 @@ class TE(Module):
                 item_loss.backward()
                 optim.step()
             logger.info('epoch: {}, acc_loss: {}'.format(epoch, acc_loss))
+            writer.add_scalar('te_train/acc_loss', acc_loss, epoch)
             if dev_path:
                 dev_score = self._validate(dev_dataset)
                 logger.info('dev score:{}'.format(dev_score))
-
+                writer.add_scalar('te_train/dev_score', dev_score, epoch)
+            writer.flush()
             adjust_learning_rate(optim, config.lr / (1 + (epoch + 1) * config.lr_decay))
+        writer.close()
         config.save()
         self._model.save()
 

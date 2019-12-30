@@ -11,7 +11,7 @@
 1. 本项目从定位上来说只是一次收集和尝试，目的并不作为企业级和生产级使用，目标群体主要是对自然语言处理各任务实践感兴趣的其他方向计算机开发人员以及初学者，更主要的是**自娱自乐**。
 2. 若有真正场景需求的用户或开发人员们可以参考[Industry 中文NLP商业服务](https://github.com/crownpku/Awesome-Chinese-NLP#industry-%E4%B8%AD%E6%96%87nlp%E5%95%86%E4%B8%9A%E6%9C%8D%E5%8A%A1)寻求商业服务，当然本渣也乐意提供有偿服务。
 3. 本项目并未像其他一些框架一样为各任务提供了一些训练数据和训练好的模型从而可以直接下载使用。
-4. 本项目的诸多模型许多都是参考Github上原有实现，然后在基础之上二次加工而成，在这里要向他们致以诚挚的谢意！
+4. 本项目的诸多模型许多都是参考Github上原有实现，然后在基础之上二次加工而成，在这里要向相关作者致以诚挚的谢意！
 5. 未对各任务模型的各种参数进行精细微调，仅仅只是能跑通的程度。
 6. 本项目仅在以下本人两种开发环境下能跑通，其他环境出现的各种问题本人概不负责。
    - Windows 10， Python 3.6，Pytorch 1.3
@@ -49,11 +49,12 @@ pip install https://github.com/pytorch/text/archive/master.zip
 ### 业务
 
 - [x] 增加项目简要说明文档
+- [x] 提供各任务Demo训练数据
 
 ### 工程
 
 - [x] 重构项目结构，将相同冗余的地方合并起来，保持项目结构清晰
-- [ ] 增加TensorBoard可视化功能，主要包含如loss和score的`scalar`和以及各model的`graph`。
+- [x] 增加TensorBoard可视化功能，主要包含如loss和score的`scalar`和以及各model的`graph`（目前Pytorch中的SummaryWriter的add_graph功能有一些bug，所以暂时添加不了了。）。
 - [ ] 增加简易的基于flask的模型部署功能（当前仅用于模型的训练效果测试）
 - [ ] 增加断点重训功能。
 - [ ] 增加earlyStopping。

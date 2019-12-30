@@ -1,16 +1,18 @@
+import os
 import sys
-sys.path.append('E:/Projects/myProjects/lightNLP')
+sys.path.append(os.path.split(os.path.realpath(__file__))[0])
 
 from lightnlp.sl import SRL
 
 srl_model = SRL()
 
-train_path = 'D:/Data/NLP/corpus/srl/train.sample.tsv'
-dev_path = 'D:/Data/NLP/corpus/srl/test.sample.tsv'
+train_path = '../data/srl/train.sample.tsv'
+dev_path = '../data/srl/test.sample.tsv'
 vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
 
-srl_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./srl_saves')
+srl_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./srl_saves',
+                log_dir='E:/Test/tensorboard/')
 
 # srl_model.load('./srl_saves')
 

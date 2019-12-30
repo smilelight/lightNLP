@@ -1,15 +1,17 @@
+import os
 import sys
-sys.path.append('E:/Projects/myProjects/lightNLP')
+sys.path.append(os.path.split(os.path.realpath(__file__))[0])
 
 from lightnlp.sl import NER
 
 ner_model = NER()
 
-train_path = 'D:/Data/NLP/corpus/ner/train.sample.txt'
-dev_path = 'D:/Data/NLP/corpus/ner/test.sample.txt'
+train_path = '../data/ner/train.sample.txt'
+dev_path = '../data/ner/test.sample.txt'
 vec_path = 'D:/Data/NLP/embedding/char/token_vec_300.bin'
 
-# ner_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./ner_saves')
+ner_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./ner_saves',
+                log_dir='E:/Test/tensorboard/')
 
 ner_model.load('./ner_saves')
 

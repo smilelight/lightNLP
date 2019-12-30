@@ -1,9 +1,13 @@
+import os
+import sys
+sys.path.append(os.path.split(os.path.realpath(__file__))[0])
+
 from lightnlp.tc import SA
 
 sa_model = SA()
 
-train_path = 'D:/Data/NLP/corpus/sa/train.sample.tsv'
-dev_path = 'D:/Data/NLP/corpus/sa/dev.sample.tsv'
+train_path = '../data/sa/train.sample.tsv'
+dev_path = '../data/sa/dev.sample.tsv'
 vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
 sa_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./sa_saves',

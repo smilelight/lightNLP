@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm
+from torch.utils.tensorboard import SummaryWriter
 
 from ...utils.log import logger
 from ...base.module import Module
@@ -27,7 +28,9 @@ class GDP(Module):
         self._ref_vocab = None
         self._pad_index = None
 
-    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, **kwargs):
+    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, log_dir=None,
+              **kwargs):
+        writer = SummaryWriter(log_dir=log_dir)
         train_dataset = gdp_tool.get_dataset(train_path)
         if dev_path:
             dev_dataset = gdp_tool.get_dataset(dev_path)
@@ -72,12 +75,15 @@ class GDP(Module):
                 scheduler.step()
             acc_loss /= len(train_iter)
             logger.info('epoch: {}, acc_loss: {}'.format(epoch, acc_loss))
+            writer.add_scalar('gdp_train/acc_loss', acc_loss, epoch)
             if dev_path:
                 dev_score, dev_metric = self._validate(dev_dataset)
                 logger.info('dev score:{}'.format(dev_score))
                 logger.info('metric:{}'.format(dev_metric))
-
+                writer.add_scalar('gdp_train/dev_score', dev_score, epoch)
+            writer.flush()
             # adjust_learning_rate(optim, config.lr / (1 + (epoch + 1) * config.lr_decay))
+        writer.close()
         config.save()
         biaffine_parser.save()
 

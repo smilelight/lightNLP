@@ -1,12 +1,17 @@
+import os
+import sys
+sys.path.append(os.path.split(os.path.realpath(__file__))[0])
+
 from lightnlp.tg import CB
 
 cb_model = CB()
 
-train_path = 'D:/Data/NLP/corpus/chatbot/chat.train.sample.tsv'
-dev_path = 'D:/Data/NLP/corpus/chatbot/chat.test.sample.tsv'
+train_path = '../data/cb/chat.train.sample.tsv'
+dev_path = '../data/cb/chat.test.sample.tsv'
 vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
-cb_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./cb_saves')
+cb_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./cb_saves',
+               log_dir='E:/Test/tensorboard/')
 
 # cb_model.load('./cb_saves')
 

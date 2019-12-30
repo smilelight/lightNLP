@@ -58,7 +58,7 @@ class TextCNN(BaseModel):
             x = self.embedding(x).to(DEVICE)
             x = x.unsqueeze(1)
         x = [F.relu(conv(x)).squeeze(3) for conv in self.convs]
-        x = [F.max_pool1d(item, item.size(2)).squeeze(2) for item in x]
+        x = [F.max_pool1d(item, int(item.size(2))).squeeze(2) for item in x]
         x = torch.cat(x, 1)
         x = self.dropout(x)
         logits = self.fc(x)

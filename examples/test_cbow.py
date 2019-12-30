@@ -1,13 +1,17 @@
+import os
+import sys
+sys.path.append(os.path.split(os.path.realpath(__file__))[0])
+
 from lightnlp.we import CBOWHierarchicalSoftmaxModule, CBOWNegativeSamplingModule, CBOWBaseModule
 
 # cbow_model = CBOWHierarchicalSoftmaxModule()
 cbow_model = CBOWBaseModule()
 # cbow_model = CBOWNegativeSamplingModule()
 
-train_path = 'D:/Data/NLP/corpus/novel/test.txt'
-dev_path = 'D:/Data/NLP/corpus/novel/test.txt'
+train_path = '../data/novel/test.txt'
+dev_path = '../data/novel/test.txt'
 
-cbow_model.train(train_path, dev_path=dev_path, save_path='./cbow_saves')
+cbow_model.train(train_path, dev_path=dev_path, save_path='./cbow_saves', log_dir='E:/Test/tensorboard/')
 
 # cbow_model.load('./cbow_saves')
 #

@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
+from torch.utils.tensorboard import SummaryWriter
 
 from ....utils.learning import adjust_learning_rate
 from ....utils.log import logger
@@ -25,7 +26,9 @@ class SkipGramBaseModule(Module):
         self._word_vocab = None
         self.model_type = None
 
-    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, **kwargs):
+    def train(self, train_path, save_path=DEFAULT_CONFIG['save_path'], dev_path=None, vectors_path=None, log_dir=None,
+              **kwargs):
+        writer = SummaryWriter(log_dir=log_dir)
         train_dataset = skip_gram_tool.get_dataset(train_path)
         if dev_path:
             dev_dataset = skip_gram_tool.get_dataset(dev_path)
@@ -50,11 +53,14 @@ class SkipGramBaseModule(Module):
                 item_loss.backward()
                 optim.step()
             logger.info('epoch: {}, acc_loss: {}'.format(epoch, acc_loss))
+            writer.add_scalar('skip_gram_base_train/acc_loss', acc_loss, epoch)
             if dev_path:
                 dev_score = self._validate(dev_dataset)
                 logger.info('dev score:{}'.format(dev_score))
+                writer.add_scalar('skip_gram_base_train/dev_score', dev_score, epoch)
+            writer.flush()
             adjust_learning_rate(optim, config.lr / (1 + (epoch + 1) * config.lr_decay))
-
+        writer.close()
         config.save()
         skip_gram.save()
 

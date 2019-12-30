@@ -1,15 +1,17 @@
+import os
 import sys
-sys.path.append('E:/Projects/myProjects/lightNLP')
+sys.path.append(os.path.split(os.path.realpath(__file__))[0])
 
 from lightnlp.sp import GDP
 
 gdp_model = GDP()
 
-train_path = 'D:/Data/NLP/corpus/gdp/train.sample.conll'
+train_path = '../data/gdp/train.sample.conll'
 vec_path = 'D:/Data/NLP/embedding/word/sgns.zhihu.bigram-char'
 
 
-# gdp_model.train(train_path, dev_path=train_path, vectors_path=vec_path, save_path='./gdp_saves')
+gdp_model.train(train_path, dev_path=train_path, vectors_path=vec_path, save_path='./gdp_saves',
+                log_dir='E:/Test/tensorboard/')
 
 gdp_model.load('./gdp_saves')
 # gdp_model.test(train_path)

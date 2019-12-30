@@ -1,15 +1,17 @@
+import os
 import sys
-sys.path.append('E:/Projects/myProjects/lightNLP')
+sys.path.append(os.path.split(os.path.realpath(__file__))[0])
 
 from lightnlp.tg import LM
 
 lm_model = LM()
 
-train_path = 'D:/Data/NLP/corpus/language_model/lm_test.txt'
-dev_path = 'D:/Data/NLP/corpus/language_model/lm_test.txt'
+train_path = '../data/lm/lm_test.txt'
+dev_path = '../data/lm/lm_test.txt'
 vec_path = 'D:/Data/NLP/embedding/char/token_vec_300.bin'
 
-lm_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./lm_saves')
+lm_model.train(train_path, vectors_path=vec_path, dev_path=train_path, save_path='./lm_saves',
+               log_dir='E:/Test/tensorboard/')
 
 # lm_model.load('./lm_saves')
 
