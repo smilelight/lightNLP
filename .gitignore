@@ -4,6 +4,7 @@
 *.idea*
 build
 dist
+test
 lightnlp.egg-info
 .vscode
 lightNLP.egg-info
