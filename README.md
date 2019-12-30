@@ -10,6 +10,7 @@
 
 1. 本项目从定位上来说只是一次收集和尝试，目的并不作为企业级和生产级使用，目标群体主要是对自然语言处理各任务实践感兴趣的其他方向计算机开发人员以及初学者，更主要的是**自娱自乐**。
 2. 若有真正场景需求的用户或开发人员们可以参考[Industry 中文NLP商业服务](https://github.com/crownpku/Awesome-Chinese-NLP#industry-%E4%B8%AD%E6%96%87nlp%E5%95%86%E4%B8%9A%E6%9C%8D%E5%8A%A1)寻求商业服务，当然本渣也乐意提供有偿服务。
+3. 对Pytorch和自然语言处理有一定了解的童鞋们，如果想追求快速开发且自由定制nlp应用，可以考虑复旦大学nlp实验室开源的[fastNLP](https://github.com/fastnlp/fastNLP)，框架功能丰富，且简洁易用。
 3. 本项目并未像其他一些框架一样为各任务提供了一些训练数据和训练好的模型从而可以直接下载使用。
 4. 本项目的诸多模型许多都是参考Github上原有实现，然后在基础之上二次加工而成，在这里要向相关作者致以诚挚的谢意！
 5. 未对各任务模型的各种参数进行精细微调，仅仅只是能跑通的程度。
@@ -43,6 +44,105 @@ pip install -i https://pypi.douban.com/simple/ lightNLP
 ```bash
 pip install https://github.com/pytorch/text/archive/master.zip
 ```
+
+## 示例
+
+### 命名实体识别（ner）
+#### 1.训练数据
+
+BIO
+
+训练数据示例如下：
+
+```
+清 B_Time
+明 I_Time
+是 O
+人 B_Person
+们 I_Person
+祭 O
+扫 O
+先 B_Person
+人 I_Person
+， O
+怀 O
+念 O
+追 O
+思 O
+的 O
+日 B_Time
+子 I_Time
+。 O
+
+正 O
+如 O
+宋 B_Time
+代 I_Time
+诗 B_Person
+人 I_Person
+```
+
+#### 2.使用示例
+##### 1.训练
+
+```
+from lightnlp.sl import NER
+
+# 创建NER对象
+ner_model = NER()
+
+train_path = '/home/lightsmile/NLP/corpus/ner/train.sample.txt'
+dev_path = '/home/lightsmile/NLP/corpus/ner/test.sample.txt'
+vec_path = '/home/lightsmile/NLP/embedding/char/token_vec_300.bin'
+
+# 只需指定训练数据路径和TensorBoard日志文件路径，预训练字向量可选，开发集路径可选，模型保存路径可选（模型保存路径默认为`xx_saves`，其中xx为模型简称，如ner）。
+ner_model.train(train_path, vectors_path=vec_path, dev_path=dev_path, save_path='./ner_saves', log_dir='E:/Test/tensorboard/')
+```
+
+##### 2.测试
+
+```
+# 加载模型，默认当前目录下的`ner_saves`目录
+ner_model.load('./ner_saves')
+# 对train_path下的测试集进行读取测试
+ner_model.test(train_path)
+```
+
+##### 3.预测
+
+```
+from pprint import pprint
+
+pprint(ner_model.predict('另一个很酷的事情是，通过框架我们可以停止并在稍后恢复训练。'))
+```
+
+预测结果：
+
+```
+[{'end': 15, 'entity': '我们', 'start': 14, 'type': 'Person'}]
+```
+
+##### 4.查看训练效果
+
+命令行中执行以下命令，其中`E:\Test\tensorBoard`修改为模型训练时日志存储路径，port端口指定可选：
+```bash
+tensorboard --logdir=E:\Test\tensorBoard --port=2019
+```
+
+可以看到类似如下效果：
+
+![tensorboard](./img/tensorboard.jpg)
+
+### 5.部署服务
+
+```python
+ner_model.deploy(host="localhost", port=2020, debug=False)
+```
+其中所有参数都可选，`host`参数默认为`localhost`，`port`端口将由程序自动向系统申请空闲端口，默认不开启`debug`模式。
+
+可以使用Postman或者编写程序进行调用测试，如下图：
+![postman](./img/postman.jpg)
+![jupyter-notebook](./img/jupyter-notebook.jpg)
 
 ## todo
 
