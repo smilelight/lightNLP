@@ -1,8 +1,8 @@
-torchtext==0.4.0
-tqdm==4.28.1
-torch==1.3.0
-pytorch_crf==0.7.0
-scikit_learn==0.20.2
+torchtext
+tqdm
+torch
+pytorch_crf
+scikit_learn
 revtok
 jieba
 regex
