@@ -190,3 +190,9 @@ ner_model.deploy(host="localhost", port=2020, debug=False)
 - [ ] 增加阅读理解相关模型以及训练预测代码
 - [ ] 增加关键词抽取相关模型以及训练预测代码
 - [ ] 增加成分句法分析相关模型以及预测训练代码
+
+## 打赏
+
+如果该项目对您有所帮助，欢迎打赏~
+
+![lho7wD.jpg](https://s2.ax1x.com/2020/01/10/lho7wD.jpg)
