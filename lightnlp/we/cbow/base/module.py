@@ -41,8 +41,8 @@ class CBOWBaseModule(Module):
         else:
             word_vocab = cbow_tool.get_vocab(train_dataset)
         self._word_vocab = word_vocab
-        train_iter = cbow_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
         config = Config(word_vocab, save_path=save_path, **kwargs)
+        train_iter = cbow_tool.get_iterator(train_dataset, batch_size=config.batch_size)
         self.model_type = config.feature
 
         cbow = CBOWBase(config)

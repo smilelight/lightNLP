@@ -32,8 +32,8 @@ class TS(Module):
         else:
             word_vocab = ts_tool.get_vocab(train_dataset)
         self._word_vocab = word_vocab
-        train_iter = ts_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
         config = TSConfig(word_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
+        train_iter = ts_tool.get_iterator(train_dataset, batch_size=config.batch_size)
         tsseq2seq = TSSeq2Seq(config)
         self._model = tsseq2seq
         optim = torch.optim.Adam(tsseq2seq.parameters(), lr=config.lr)

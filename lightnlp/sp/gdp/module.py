@@ -44,8 +44,8 @@ class GDP(Module):
         self._word_vocab = word_vocab
         self._pos_vocab = pos_vocab
         self._ref_vocab = ref_vocab
-        train_iter = gdp_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
         config = Config(word_vocab, pos_vocab, ref_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
+        train_iter = gdp_tool.get_iterator(train_dataset, batch_size=config.batch_size)
         biaffine_parser = BiaffineParser(config)
         self._model = biaffine_parser
         self._pad_index = config.pad_index

@@ -32,8 +32,8 @@ class CB(Module):
         else:
             word_vocab = cb_tool.get_vocab(train_dataset)
         self._word_vocab = word_vocab
-        train_iter = cb_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
         config = CBConfig(word_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
+        train_iter = cb_tool.get_iterator(train_dataset, batch_size=config.batch_size)
         cbseq2seq = CBSeq2Seq(config)
 
         self._model = cbseq2seq

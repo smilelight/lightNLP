@@ -40,8 +40,8 @@ class TDP(Module):
             word_vocab, action_vocab = tdp_tool.get_vocab(train_dataset)
         self._word_vocab = word_vocab
         self._action_vocab = action_vocab
-        train_iter = tdp_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
         config = Config(word_vocab, action_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
+        train_iter = tdp_tool.get_iterator(train_dataset, batch_size=config.batch_size)
         trainsition_parser = TransitionParser(config)
         self._model = trainsition_parser
         optim = torch.optim.Adam(trainsition_parser.parameters(), lr=config.lr)

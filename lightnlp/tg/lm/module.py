@@ -31,8 +31,9 @@ class LM(Module):
         else:
             word_vocab = lm_tool.get_vocab(train_dataset)
         self._word_vocab = word_vocab
-        train_iter = lm_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'], bptt_len=DEFAULT_CONFIG['bptt_len'])
         config = LMConfig(word_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
+        train_iter = lm_tool.get_iterator(train_dataset, batch_size=config.batch_size,
+                                          bptt_len=config.bptt_len)
         rnnlm = RNNLM(config)
         self._model = rnnlm
         optim = torch.optim.Adam(rnnlm.parameters(), lr=config.lr)

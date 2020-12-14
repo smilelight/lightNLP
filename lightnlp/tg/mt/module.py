@@ -34,9 +34,9 @@ class MT(Module):
             source_vocab, target_vocab = mt_tool.get_vocab(train_dataset)
         self._source_vocab = source_vocab
         self._target_vocab = target_vocab
-        train_iter = mt_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
         config = MTConfig(source_vocab, target_vocab, source_vectors_path, target_vectors_path, save_path=save_path,
                           **kwargs)
+        train_iter = mt_tool.get_iterator(train_dataset, batch_size=config.batch_size)
         mtseq2seq = MTSeq2Seq(config)
         self._model = mtseq2seq
         optim = torch.optim.Adam(mtseq2seq.parameters(), lr=config.lr)

@@ -40,8 +40,8 @@ class SA(Module):
             word_vocab, label_vocab = sa_tool.get_vocab(train_dataset)
         self._word_vocab = word_vocab
         self._label_vocab = label_vocab
-        train_iter = sa_tool.get_iterator(train_dataset, batch_size=DEFAULT_CONFIG['batch_size'])
         config = Config(word_vocab, label_vocab, save_path=save_path, vector_path=vectors_path, **kwargs)
+        train_iter = sa_tool.get_iterator(train_dataset, batch_size=config.batch_size)
         textcnn = TextCNN(config)
         # temp = torch.randint(1, 100, (128, 32)).to(DEVICE)
         # writer.add_graph(textcnn, (torch.randint(1, 100, (128, 32)).to(DEVICE)))
